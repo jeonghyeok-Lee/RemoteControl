@@ -3,7 +3,9 @@ package com.java.slave;
 public class SlaveProgram {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+//		new LogInForm();
+		new LinkPrograms();
+//		new LinkConsole().checkLinkConsole();
 
 	}
 }
