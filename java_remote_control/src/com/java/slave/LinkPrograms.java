@@ -5,6 +5,7 @@ import java.awt.Container;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.net.Socket;
 
 import javax.swing.JButton;
@@ -13,10 +14,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import com.java.slave.thread.SlaveConnectThread;
+
 public class LinkPrograms extends JFrame {
 	JTextField txtIp = null;
 	JTextField txtPort = null;
-	JLabel labelResult = null;
+	JLabel labelResult = null, labelIP = null, labelHost = null;
 	JButton button = null;	
 	Socket socket = null;
 	
@@ -31,18 +34,22 @@ public class LinkPrograms extends JFrame {
 		Container container = getContentPane();						// 현재 컴포넌트를 포함할 수 있는 컨테이너 가져옴
 		container.setLayout(new BorderLayout(3,3));
 		
-		JPanel panel = new JPanel(new GridLayout(3,2));
+		JPanel panel = new JPanel(new GridLayout(4,2));
 		panel.add(new JLabel("Connect Server IP   : "));
 		panel.add(txtIp = new JTextField(15));
 		panel.add(new JLabel("Connect Server Port : "));
 		panel.add(txtPort = new JTextField(15));
 		panel.add(button = new JButton("연결하기"));
 		panel.add(labelResult = new JLabel("연결확인"));
+		panel.add(labelIP = new JLabel("Connect Server IP"));
+		panel.add(labelHost = new JLabel("Connect Server Host"));
 		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
 					socket = new Socket(txtIp.getText().toString(), Integer.parseInt(txtPort.getText()));
+					Thread connectThread = new SlaveConnectThread(socket,labelResult, labelIP, labelHost);
+					connectThread.start();
 				}catch(Exception e1) {
 					e1.getMessage();
 				}
@@ -50,7 +57,6 @@ public class LinkPrograms extends JFrame {
 		});
 		
 		container.add(panel, BorderLayout.NORTH);
-		
 		
 		setSize(400,200);
 		setVisible(true);

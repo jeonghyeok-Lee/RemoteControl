@@ -3,7 +3,6 @@ package com.java.master;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.GridLayout;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -11,13 +10,15 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com.java.master.thread.MasterConnectThread;
+
 public class CheckLinkProgram extends JFrame {
 	private static final long serialVersionUID = -1117545047093150805L;//
 	JLabel labelIP = null, labelHost = null, labelResult = null;
 	
 	public CheckLinkProgram() {
 		setUI();
-		setThread();
+		settingThread();
 	}
 	
 	private void setUI() {
@@ -29,9 +30,9 @@ public class CheckLinkProgram extends JFrame {
 		
 		JPanel panel = new JPanel(new GridLayout(3,2));
 		panel.add(new JLabel("Connect Client IP   : "));
-		panel.add(labelIP = new JLabel(""));
+		panel.add(labelIP = new JLabel("000.000.000.000"));
 		panel.add(new JLabel("Connect Client Host : "));
-		panel.add(labelHost = new JLabel(""));
+		panel.add(labelHost = new JLabel("미접속"));
 		panel.add(labelResult = new JLabel("연결확인"));
 		
 		container.add(panel, BorderLayout.NORTH);
@@ -40,18 +41,17 @@ public class CheckLinkProgram extends JFrame {
 		setVisible(true);
 	}
 	
-	private void setThread() {
+	// 스레드로 설정할것
+	private void settingThread() {
 		ServerSocket serverSocket = null;
 		Socket socket = null;
 		try {
 			serverSocket = new ServerSocket(9095);
 			socket = serverSocket.accept();
-			labelResult.setText("사용자가 접속하였습니다.");
-			InetAddress inet = socket.getInetAddress();
-			labelIP.setText(inet.getHostAddress());
-			labelHost.setText(inet.getHostName());
+			Thread connectThread = new MasterConnectThread(socket,labelResult,labelIP,labelHost);
+			connectThread.start();
 		}catch(Exception e) {
 			System.out.println(e.getMessage());
-		}
+		} 
 	}
 }
