@@ -1,10 +1,12 @@
 package com.java.slave;
 
+import com.java.jframe.LogInJFrame;
+
 public class SlaveProgram {
 
 	public static void main(String[] args) {
-//		new LogInForm();
-		new LinkPrograms();
+//		new LogInJFrame(true);
+//		new SlaveJFrame();
 //		new LinkConsole().checkLinkConsole();
 
 	}

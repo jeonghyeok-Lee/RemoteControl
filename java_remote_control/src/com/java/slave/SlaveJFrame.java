@@ -5,7 +5,6 @@ import java.awt.Container;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.net.Socket;
 
 import javax.swing.JButton;
@@ -15,15 +14,16 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.java.slave.thread.SlaveConnectThread;
+import com.java.slave.thread.SlaveCoummunicationThread;
 
-public class LinkPrograms extends JFrame {
+public class SlaveJFrame extends JFrame {
 	JTextField txtIp = null;
 	JTextField txtPort = null;
 	JLabel labelResult = null, labelIP = null, labelHost = null;
 	JButton button = null;	
 	Socket socket = null;
 	
-	public LinkPrograms() {
+	public SlaveJFrame() {
 		setUI();
 	}
 	
@@ -43,13 +43,16 @@ public class LinkPrograms extends JFrame {
 		panel.add(labelResult = new JLabel("연결확인"));
 		panel.add(labelIP = new JLabel("Connect Server IP"));
 		panel.add(labelHost = new JLabel("Connect Server Host"));
+		
 		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					socket = new Socket(txtIp.getText().toString(), Integer.parseInt(txtPort.getText()));
-					Thread connectThread = new SlaveConnectThread(socket,labelResult, labelIP, labelHost);
-					connectThread.start();
+				    socket = new Socket(txtIp.getText().toString(), Integer.parseInt(txtPort.getText()));
+				    Thread connectThread = new SlaveConnectThread(socket, labelResult, labelIP, labelHost);
+				    Thread communicationThread = new SlaveCoummunicationThread(socket);
+				    connectThread.start();
+				    communicationThread.start();
 				}catch(Exception e1) {
 					e1.getMessage();
 				}
