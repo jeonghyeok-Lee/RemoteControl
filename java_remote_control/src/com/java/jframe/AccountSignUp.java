@@ -96,6 +96,7 @@ public class AccountSignUp extends JFrame {
 				number = (int)(Math.random()*9999) +1;
 				System.out.println(number);
 				EmailSend emailSend = new EmailSend(userAddress, "인증번호", "인증번호 : "+ number + "입니다.");
+				emailSend.setSend();
 				
 			}
 			

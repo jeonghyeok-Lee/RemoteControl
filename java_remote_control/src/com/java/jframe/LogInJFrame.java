@@ -96,4 +96,6 @@ public class LogInJFrame extends JFrame {
 		setSize(400,200);
 		setVisible(true);
 	}
+	
+	
 }

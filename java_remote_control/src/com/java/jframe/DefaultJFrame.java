@@ -9,63 +9,161 @@ import java.awt.GridLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.LineBorder;
 
-
-// 나중에 수정
 public class DefaultJFrame extends JFrame {
+	private String title = null;
+	private int xSize = 0;
+	private int ySize = 0;
 	private Container contain = null;
-	private String titleName = "";
-	private int xSize = 0
-			, ySize = 0;
 	private JPanel northPanel = null
-			, centerPanel = null
-			, eastPanel = null
-			, wastPanel = null
-			, southPanel = null;
-	private JLabel version = null;
+			,centerPanel = null
+			,eastPanel = null
+			,westPanel = null
+			,southPanel = null;
+	
+	private JPanel group = null;
+	
+	private JLabel lbversion = null;
+	
 
-	public DefaultJFrame(String titleName, int xSize, int ySize) {
-		this.titleName = titleName;
-		this.xSize = xSize;
-		this.ySize = ySize;
-
-		defaultSetUI();
-
+	public String getTitle() {
+		return title;
 	}
 
-	private void defaultSetUI() {
-		setTitle(titleName);
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public int getxSize() {
+		return xSize;
+	}
+
+	public void setxSize(int xSize) {
+		this.xSize = xSize;
+	}
+
+	public int getySize() {
+		return ySize;
+	}
+
+	public void setySize(int ySize) {
+		this.ySize = ySize;
+	}
+
+	public Container getContain() {
+		return contain;
+	}
+
+	public void setContain(Container contain) {
+		this.contain = contain;
+	}
+
+	public JPanel getNorthPanel() {
+		return northPanel;
+	}
+
+	public void setNorthPanel(JPanel northPanel) {
+		this.northPanel = northPanel;
+	}
+
+	public JPanel getCenterPanel() {
+		return centerPanel;
+	}
+
+	public void setCenterPanel(JPanel centerPanel) {
+		this.centerPanel = centerPanel;
+	}
+
+	public JPanel getEastPanel() {
+		return eastPanel;
+	}
+
+	public void setEastPanel(JPanel eastPanel) {
+		this.eastPanel = eastPanel;
+	}
+
+	public JPanel getWestPanel() {
+		return westPanel;
+	}
+
+	public void setWestPanel(JPanel westPanel) {
+		this.westPanel = westPanel;
+	}
+
+	public JPanel getSouthPanel() {
+		return southPanel;
+	}
+
+	public void setSouthPanel(JPanel southPanel) {
+		this.southPanel = southPanel;
+	}
+
+	public JLabel getLbversion() {
+		return lbversion;
+	}
+
+	public void setLbversion(JLabel lbversion) {
+		this.lbversion = lbversion;
+	}
+
+	public JPanel getGroup() {
+		return group;
+	}
+
+	public void setGroup(JPanel group) {
+		this.group = group;
+	}
+
+	public DefaultJFrame(String title, int xSize, int ySize) {
+		this.title = title;
+		this.xSize = xSize;
+		this.ySize = ySize;
+		setUI();
+			
+	}
+	
+	// 기본 세팅
+	private void setUI() {
+		setTitle(title);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+		
 		contain = getContentPane();
-		contain.setLayout(new BorderLayout(10, 3));
+		contain.setLayout(new BorderLayout(10,3));
 		this.setLocationRelativeTo(null);
-
+		
 		northPanel = new JPanel();
 		centerPanel = new JPanel();
-		eastPanel = new JPanel(new FlowLayout());
-		wastPanel = new JPanel();
-		southPanel = new JPanel(new GridLayout(0, 1));
-
-		version = new JLabel("Version 1.0.0 ");
-		version.setHorizontalAlignment(JLabel.RIGHT);
-		version.setOpaque(true); // 배경색 적용을 위함
-		version.setBackground(new Color(204, 229, 255));
-
-		southPanel.add(version);
-
-		contain.add(northPanel, BorderLayout.NORTH);
-		contain.add(centerPanel, BorderLayout.CENTER);
-		contain.add(eastPanel, BorderLayout.EAST);
-		contain.add(wastPanel, BorderLayout.WEST);
-		contain.add(southPanel, BorderLayout.SOUTH);
-
+		eastPanel = new JPanel();
+		westPanel = new JPanel();
+		southPanel = new JPanel(new GridLayout(0,1));
+		
+		lbversion = new JLabel("Version 1.0.0");
+		lbversion.setHorizontalAlignment(JLabel.RIGHT);
+		lbversion.setOpaque(true); // 배경색 적용을 위함
+		lbversion.setBackground(new Color(204,229,255));
+		
+		northPanel.add(new JLabel("로고"));
+		southPanel.add(lbversion);
+		
 		setSize(xSize, ySize);
 		setVisible(true);
 	}
-
-	public static void main(String[] args) {
-		new DefaultJFrame("테스트", 500, 300);
-
+	
+	// 해당 JPanel을 Container에 부착
+	public void addContain() {
+		contain.add(northPanel,BorderLayout.NORTH);
+		contain.add(centerPanel,BorderLayout.CENTER);
+		contain.add(eastPanel,BorderLayout.EAST);
+		contain.add(westPanel,BorderLayout.WEST);
+		contain.add(southPanel,BorderLayout.SOUTH);
+	}
+	
+	public JPanel addGroupBox() {
+		group = new JPanel();
+		// group에 border주기
+		group.setBorder(new LineBorder(Color.black, 1, true));
+		
+		return group;
 	}
 }
