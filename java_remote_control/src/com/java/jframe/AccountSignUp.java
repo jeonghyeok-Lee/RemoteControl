@@ -47,8 +47,8 @@ public class AccountSignUp extends JFrame {
 		JTextField txtEmailCheck = new JTextField(15);
 		JComboBox cmbEmail = new JComboBox();		
 		
-		cmbEmail.addItem("@naver.com");
 		cmbEmail.addItem("@gmail.com");
+		cmbEmail.addItem("@naver.com");
 		
 		JButton btnCheckID = new JButton("중복 확인");
 		btnCheckID.addActionListener(new ActionListener() {

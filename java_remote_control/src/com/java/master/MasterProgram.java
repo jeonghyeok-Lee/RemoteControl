@@ -7,10 +7,10 @@ public class MasterProgram {
 
 	public static void main(String[] args) {
 //		new LogInJFrame(false);
-//		new AccountSignUp();
+		new AccountSignUp();
 //		CmdConnect cmd = new CmdConnect();
 //		System.out.println(cmd.execCmd("java -version"));
-		new MasterJFrame();
+//		new MasterJFrame();
 //		new CheckLinkConsole().checkLink();
 	}
 

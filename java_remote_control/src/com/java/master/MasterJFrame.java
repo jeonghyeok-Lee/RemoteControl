@@ -72,6 +72,7 @@ public class MasterJFrame extends JFrame {
 		JPanel east = jframe.getEastPanel();
 
 		east.add(setEast());
+		east.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		west.add(setWest());
 		
 		jframe.addContain();
