@@ -22,22 +22,28 @@ import com.java.utility.EmailSend;
 
 public class AccountSignUp extends JFrame {
 	int number = 0;
+	DefaultJFrame jframe = null;
 
 	public AccountSignUp() {
 		setUI();
 	}
 	
 	private void setUI() {
-		setTitle("회원가입");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		jframe = new DefaultJFrame("회원가입" , 600,400);
 		
-		Container contain = getContentPane();
-		contain.setLayout(new BorderLayout(10,3));
-		this.setLocationRelativeTo(null);
+		JPanel center = jframe.getCenterPanel();
 		
-		JPanel northPanel = new JPanel(new FlowLayout());
-		JPanel centerPanel = new JPanel(new GridLayout(0,3,10,5));
-		JPanel southPanel = new JPanel(new GridLayout(0,1));
+		center.add(setCenter());
+		
+		jframe.addContain();
+		
+	}
+	
+	private JPanel setCenter() {
+		
+		JPanel group = jframe.addGroupBox(Color.white, 1, true);
+		
+		JPanel centerContent = new JPanel(new GridLayout(0,3,10,5));
 		
 		JTextField txtID = new JTextField(15);
 		JPasswordField txtPW = new JPasswordField(15);
@@ -102,46 +108,32 @@ public class AccountSignUp extends JFrame {
 			
 		});
 		
-		
-		JLabel lbVersion = new JLabel("Version 1.0.0");
-		lbVersion.setHorizontalAlignment(JLabel.RIGHT);
-		lbVersion.setOpaque(true); // 배경색 적용을 위함
-		lbVersion.setBackground(new Color(204,229,255));
-		
-		
 		JComponent[] compornet = new JComponent[]{
-			new JLabel("ID"),txtID,btnCheckID
-			,new JLabel("PW"),txtPW,new JLabel()
-			,new JLabel("PW 확인"),txtPWCheck,btnCheckPW
-			,new JLabel("Name"),txtName,new JLabel()
-			,new JLabel("Email"),txtEmail,cmbEmail
-			,new JLabel("Email Check"), txtEmailCheck,btnCheckEmail
-			,new JLabel(),new JLabel(),new JLabel()
-			,new JLabel(),btnSign,new JLabel()
-		};
-		
-		for(JComponent com : compornet){
-			if(com instanceof JLabel) {
-				((JLabel)com).setHorizontalAlignment(0);
-			}
+				new JLabel("ID"),txtID,btnCheckID
+				,new JLabel("PW"),txtPW,new JLabel()
+				,new JLabel("PW 확인"),txtPWCheck,btnCheckPW
+				,new JLabel("Name"),txtName,new JLabel()
+				,new JLabel("Email"),txtEmail,cmbEmail
+				,new JLabel("Email Check"), txtEmailCheck,btnCheckEmail
+				,new JLabel(),new JLabel(),new JLabel()
+				,new JLabel(),btnSign,new JLabel()
+			};
 			
-			if(com instanceof JButton) {
-				com.setBorder(BorderFactory.createEmptyBorder(5,0,5,0));
+			for(JComponent com : compornet){
+				if(com instanceof JLabel) {
+					((JLabel)com).setHorizontalAlignment(0);
+				}
+				
+				if(com instanceof JButton) {
+					com.setBorder(BorderFactory.createEmptyBorder(5,0,5,0));
+				}
+				
+				centerContent.add(com);
 			}
+		
+			group.add(centerContent);
 			
-			centerPanel.add(com);
-		}
-		
-		northPanel.add(new JLabel("로고"));
-		southPanel.add(lbVersion);
-		
-		contain.add(northPanel,BorderLayout.NORTH);
-		contain.add(centerPanel,BorderLayout.CENTER);
-		contain.add(southPanel,BorderLayout.SOUTH);
-		
-		setSize(400,300);
-		setVisible(true);
-		
+		return group;
 	}
-
+	
 }

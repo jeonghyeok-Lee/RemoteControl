@@ -30,40 +30,6 @@ public class MasterJFrame extends JFrame {
 		setUI1();
 		settingThread();
 	}
-	
-	// 초기형태
-//	private void setUI() {
-//		setTitle("마스터 프로그램");
-//		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//
-//		Container container = getContentPane(); // 현재 컴포넌트를 포함할 수 있는 컨테이너 가져옴
-//		container.setLayout(new BorderLayout(10, 3));
-//
-//		JPanel panel = new JPanel(new GridLayout(3, 2));
-//		panel.setBorder(new LineBorder(Color.red, 1, true));
-//
-//		btnDisConnect = new JButton("연결해제");
-//		btnDisConnect.addActionListener(new ActionListener() {
-//
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				connectCheck = false;
-//			}
-//
-//		});
-//
-//		panel.add(new JLabel("Connect Client IP   : "));
-//		panel.add(labelIP = new JLabel("000.000.000.000"));
-//		panel.add(new JLabel("Connect Client Host : "));
-//		panel.add(labelHost = new JLabel("미접속"));
-//		panel.add(btnDisConnect);
-//		panel.add(labelResult = new JLabel("연결확인"));
-//
-//		container.add(panel, BorderLayout.NORTH);
-//
-//		setSize(400, 200);
-//		setVisible(true);
-//	}
 
 	private void setUI1() {
 		jframe = new DefaultJFrame("마스터 프로그램", 500, 500);
@@ -82,7 +48,7 @@ public class MasterJFrame extends JFrame {
 	private JPanel setEast() {
 		
 		// 그룹박스 역할 수행
-		JPanel group = jframe.addGroupBox();
+		JPanel group = jframe.addGroupBox(Color.black,1,true);
 		
 		// 실제 데이터 역할 수행
 		JPanel eastContent = new JPanel();

@@ -3,7 +3,7 @@ package com.java.jframe;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
-import java.awt.FlowLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 
 import javax.swing.JFrame;
@@ -136,15 +136,7 @@ public class DefaultJFrame extends JFrame {
 		centerPanel = new JPanel();
 		eastPanel = new JPanel();
 		westPanel = new JPanel();
-		southPanel = new JPanel(new GridLayout(0,1));
-		
-		lbversion = new JLabel("Version 1.0.0");
-		lbversion.setHorizontalAlignment(JLabel.RIGHT);
-		lbversion.setOpaque(true); // 배경색 적용을 위함
-		lbversion.setBackground(new Color(204,229,255));
-		
-		northPanel.add(new JLabel("로고"));
-		southPanel.add(lbversion);
+		southPanel = new JPanel();
 		
 		setSize(xSize, ySize);
 		setVisible(true);
@@ -152,18 +144,50 @@ public class DefaultJFrame extends JFrame {
 	
 	// 해당 JPanel을 Container에 부착
 	public void addContain() {
+		
+		northPanel.add(addLogo());
+		southPanel.add(setVersion());
+		
 		contain.add(northPanel,BorderLayout.NORTH);
 		contain.add(centerPanel,BorderLayout.CENTER);
 		contain.add(eastPanel,BorderLayout.EAST);
 		contain.add(westPanel,BorderLayout.WEST);
 		contain.add(southPanel,BorderLayout.SOUTH);
+		
+//		setResizable(false);
 	}
 	
-	public JPanel addGroupBox() {
+	// 그룹박스 만들기 색상 / 두께 / 표시여부
+	public JPanel addGroupBox(Color color, int width, boolean useCheck ) {
 		group = new JPanel();
 		// group에 border주기
-		group.setBorder(new LineBorder(Color.black, 1, true));
+		group.setBorder(new LineBorder(color, width, useCheck));
 		
 		return group;
+	}
+	
+	// 로고부분
+	public JPanel addLogo() {
+		JPanel northContent = new JPanel();
+		northContent.add(new JLabel("로고"));
+		
+		return northContent;
+	}
+	
+	// 버전표시부분
+	public JPanel setVersion() {
+		
+		JPanel southContent = new JPanel(new GridLayout(0,1));
+		
+		southContent.setPreferredSize(new Dimension(this.getWidth(),20));
+		
+		lbversion = new JLabel("Version 1.0.0");
+		lbversion.setHorizontalAlignment(JLabel.RIGHT);
+//		lbversion.setOpaque(true); // 배경색 적용을 위함
+//		lbversion.setBackground(new Color(204,229,255));
+		
+		southContent.add(lbversion);
+		
+		return southContent;
 	}
 }
