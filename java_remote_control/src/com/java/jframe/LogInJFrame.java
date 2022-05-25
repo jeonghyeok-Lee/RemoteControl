@@ -1,12 +1,9 @@
 package com.java.jframe;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -15,6 +12,9 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import com.java.db.dao.UserDAO;
+import com.java.db.dto.UserDTO;
+import com.java.master.MasterJFrame;
 import com.java.slave.SlaveJFrame;
 
 public class LogInJFrame extends JFrame {
@@ -22,45 +22,75 @@ public class LogInJFrame extends JFrame {
 	JPasswordField txtPW = null;
 	JLabel lbID = null, lbPW = null;
 	
+	UserDAO dao = null;
+	ArrayList<UserDTO> dto = null;
+	
+	DefaultJFrame jframe = null;
+	
 	// checkProgram - 관리자인지 아닌지 유무 파악용
 	public LogInJFrame(boolean checkProgram) {
-		setUI(checkProgram);
+		setUI0(checkProgram);
 	}
 	
-	private void setUI(boolean checkProgram) {
-		setTitle("로그인폼");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	private void setUI0(boolean checkProgram) {
+		jframe = new DefaultJFrame("로그인 폼",450,220);
 		
-		Container contain = getContentPane();
-		contain.setLayout(new BorderLayout(10,3));
-		this.setLocationRelativeTo(null);
+		dao = new UserDAO();
+		JPanel center = jframe.getCenterPanel();
 		
-		JPanel northPanel = new JPanel(new FlowLayout());
-		JPanel centerPanel = new JPanel(new GridLayout(3,2,10,10));
-		JPanel eastPanel = new JPanel(new FlowLayout());
-		JPanel southPanel = new JPanel(new GridLayout(1,1));
+		center.add(setCenter(checkProgram));
 		
-		JLabel laResult = new JLabel("Version 1.0.0");
-		laResult.setHorizontalAlignment(JLabel.RIGHT);
-		laResult.setOpaque(true); // 배경색 적용을 위함
-		laResult.setBackground(new Color(204,229,255));
+		jframe.addContain();
+		
+	}
+	
+	private JPanel setCenter(boolean checkProgram) {
+		JPanel centerContent = new JPanel(new GridLayout(3,2,10,10));
+		JPanel btnContentLeft = new JPanel(new GridLayout(0,2));
+		JPanel btnContentRight = new JPanel(new GridLayout(0,2,10,10));
+		
 		
 		JButton btnLogin = new JButton("로그인");
 		btnLogin.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JButton b = (JButton)e.getSource();
+				
 				if(!isStringEmpty(txtID.getText().toString()) && !isStringEmpty(txtPW.getText().toString())) {
-					laResult.setText("ID : " + txtID.getText() + " PW : " + txtPW.getText());
+					dto = dao.userSelect("where user_id = '" + txtID.getText() +"'" );
+					System.out.println("ID : " + dto.get(0).getUserId() + " PW : " + dto.get(0).getUserPassword());
+					if(!checkProgram) {
+						new MasterJFrame();
+					}else {
+						new SlaveJFrame();						
+					}
+					dispose();
+						
 				}else {
-					laResult.setText("ID/PW를 정확하게 입력하여주세요");
+					System.out.println("ID/PW를 정확하게 입력하여주세요");
 				}	
 			}
-			private boolean isStringEmpty(String string) {
-				return string == null || string.trim().isEmpty();
-			}
 		});
-//		btnLogin.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+		
+		JButton btnAccount = new JButton("회원가입");
+		btnAccount.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				new AccountSignUp();
+
+			}
+			
+		});
+		
+		centerContent.add(lbID = new JLabel("ID : "));
+		lbID.setHorizontalAlignment(JLabel.CENTER);
+		centerContent.add(txtID = new JTextField(15));
+		centerContent.add(lbPW = new JLabel("PW : "));
+		lbPW.setHorizontalAlignment(JLabel.CENTER);
+		centerContent.add(txtPW = new JPasswordField(15));
+		btnContentLeft.add(new JLabel());
+		btnContentLeft.add(btnLogin);
 		
 		if(checkProgram) {
 			JButton btnNonLogin = new JButton("비로그인");
@@ -68,34 +98,25 @@ public class LogInJFrame extends JFrame {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					laResult.setText("비로그인으로 접속을 시도하였습니다.");
 					new SlaveJFrame();
+					dispose();
 				}
-				
 			});
-			eastPanel.add(btnNonLogin);
+			btnContentRight.add(btnNonLogin);
+		}else {
+			btnContentRight.add(new JLabel());
 		}
+		btnContentRight.add(btnAccount);
 		
-		northPanel.add(new JLabel("로고"));
+		centerContent.add(btnContentLeft);
+		centerContent.add(btnContentRight);
 		
-		centerPanel.add(lbID = new JLabel("ID : "));
-		lbID.setHorizontalAlignment(JLabel.RIGHT);
-		centerPanel.add(txtID = new JTextField(15));
-		centerPanel.add(lbPW = new JLabel("PW : "));
-		lbPW.setHorizontalAlignment(JLabel.RIGHT);
-		centerPanel.add(txtPW = new JPasswordField(15));
-
-		eastPanel.add(btnLogin);
-		southPanel.add(laResult);
+		return centerContent;
 		
-		contain.add(northPanel,BorderLayout.NORTH);
-		contain.add(centerPanel,BorderLayout.CENTER);
-		contain.add(eastPanel,BorderLayout.EAST);
-		contain.add(southPanel,BorderLayout.SOUTH);
-
-		setSize(400,200);
-		setVisible(true);
 	}
 	
+	private boolean isStringEmpty(String string) {
+		return string == null || string.trim().isEmpty();
+	}
 	
 }
