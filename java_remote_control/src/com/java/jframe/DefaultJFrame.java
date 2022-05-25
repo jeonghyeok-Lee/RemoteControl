@@ -5,7 +5,10 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -115,16 +118,43 @@ public class DefaultJFrame extends JFrame {
 		this.group = group;
 	}
 
+	// 기본 프레임을 생성해줄 생성자
 	public DefaultJFrame(String title, int xSize, int ySize) {
 		this.title = title;
 		this.xSize = xSize;
 		this.ySize = ySize;
-		setUI();
+		setPanel();
+			
+	}
+	
+	// 알림창을 생성해줄 생성자(타이틀, x좌표, y좌표, 내용, 확인, 취소버튼여부)
+	public DefaultJFrame(String title, int xSize, int ySize, JLabel[] content, JButton btnOk, boolean btnNo) {
+		this.title = title;
+		this.xSize = xSize;
+		this.ySize = ySize;
+		
+		setPanel();
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		
+		for(JLabel con : content) {
+			centerPanel.add(con);
+		}
+		southPanel.add(btnOk);
+		if(btnNo) {
+			JButton btnCancel = new JButton("취소");
+			btnCancel.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					dispose();	// 현재 창닫기
+				}
+			});
+			southPanel.add(btnCancel);
+		}
 			
 	}
 	
 	// 기본 세팅
-	private void setUI() {
+	public void setPanel() {
 		setTitle(title);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
@@ -139,7 +169,6 @@ public class DefaultJFrame extends JFrame {
 		southPanel = new JPanel();
 		
 		setSize(xSize, ySize);
-		setVisible(true);
 	}
 	
 	// 해당 JPanel을 Container에 부착
@@ -148,13 +177,20 @@ public class DefaultJFrame extends JFrame {
 		northPanel.add(addLogo());
 		southPanel.add(setVersion());
 		
+		addContaionEmpty();
+	}
+	
+	// 버전과 로고가 없는 Container
+	public void addContaionEmpty() {
+		
 		contain.add(northPanel,BorderLayout.NORTH);
 		contain.add(centerPanel,BorderLayout.CENTER);
 		contain.add(eastPanel,BorderLayout.EAST);
 		contain.add(westPanel,BorderLayout.WEST);
 		contain.add(southPanel,BorderLayout.SOUTH);
 		
-//		setResizable(false);
+		setVisible(true);
+		setResizable(false);
 	}
 	
 	// 그룹박스 만들기 색상 / 두께 / 표시여부
@@ -179,15 +215,19 @@ public class DefaultJFrame extends JFrame {
 		
 		JPanel southContent = new JPanel(new GridLayout(0,1));
 		
-		southContent.setPreferredSize(new Dimension(this.getWidth(),20));
+		southContent.setPreferredSize(new Dimension(this.getWidth(),15));
 		
-		lbversion = new JLabel("Version 1.0.0");
+		lbversion = new JLabel("Version 1.0.1     ");
 		lbversion.setHorizontalAlignment(JLabel.RIGHT);
-//		lbversion.setOpaque(true); // 배경색 적용을 위함
-//		lbversion.setBackground(new Color(204,229,255));
+		lbversion.setOpaque(true); // 배경색 적용을 위함
+		lbversion.setBackground(new Color(204,229,255));
 		
 		southContent.add(lbversion);
 		
 		return southContent;
+	}
+
+	public void frameDispose() {
+		dispose();
 	}
 }
