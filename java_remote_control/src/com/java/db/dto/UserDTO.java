@@ -7,14 +7,16 @@ public class UserDTO {
 	private String userName;
 	private String userEmail;
 	private String userDate;
+	private String userRank;
 	
-	public UserDTO(int userNo, String userId, String userPassword, String userName, String userEmail, String userDate) {
+	public UserDTO(int userNo, String userId, String userPassword, String userName, String userEmail, String userDate,String userRank) {
 		this.userNo = userNo;
 		this.userId = userId;
 		this.userPassword = userPassword;
 		this.userName = userName;
 		this.userEmail = userEmail;
 		this.userDate = userDate;
+		this.userRank = userRank;
 	}
 	
 	public int getUserNo() {
@@ -54,6 +56,14 @@ public class UserDTO {
 
 	public void setUserDate(String userDate) {
 		this.userDate = userDate;
+	}
+
+	public String getUserRank() {
+		return userRank;
+	}
+
+	public void setUserRank(String userRank) {
+		this.userRank = userRank;
 	}
 	
 

@@ -25,8 +25,8 @@ public class UserDAO {
 		}
 	}
 	
-	public ArrayList<UserDTO> userSelect(){
-		query = "select * from user";
+	public ArrayList<UserDTO> userSelect(String where){
+		query = "select * from user " + where;
 		ArrayList<UserDTO> userDTO = new ArrayList<UserDTO>();
 		try {
 			conn = DriverManager.getConnection(dbInfo.getUrl(), dbInfo.getUid(), dbInfo.getPw());
@@ -40,8 +40,9 @@ public class UserDAO {
 				String userName = rs.getString("user_name");
 				String userEmail = rs.getString("user_email");
 				String userDate = rs.getString("user_date");
+				String userRank = rs.getString("user_rank");
 				
-				UserDTO dto = new UserDTO(userNo, userId, userPassword, userName, userEmail, userDate);
+				UserDTO dto = new UserDTO(userNo, userId, userPassword, userName, userEmail, userDate,userRank);
 				userDTO.add(dto);
 			}
 		}catch(Exception e) {
