@@ -32,7 +32,7 @@ public class MasterJFrame extends JFrame {
 	}
 
 	private void setUI1() {
-		jframe = new DefaultJFrame("마스터 프로그램", 500, 500);
+		jframe = new DefaultJFrame("마스터 프로그램", 500, 300);
 
 		JPanel west = jframe.getWestPanel();
 		JPanel east = jframe.getEastPanel();
@@ -105,10 +105,9 @@ public class MasterJFrame extends JFrame {
 		try {
 			serverSocket = new ServerSocket(9095);
 			socket = serverSocket.accept();
-			MasterConnectThread connectThread = new MasterConnectThread(socket, labelResult, labelIP, labelHost,
-					connectCheck);
-			connectThread.start();
+			MasterConnectThread connectThread = new MasterConnectThread(socket, labelResult, labelIP, labelHost ,connectCheck);
 			MasterCoummunicationThread mouseThread = new MasterCoummunicationThread(socket);
+			connectThread.start();
 			mouseThread.start();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
