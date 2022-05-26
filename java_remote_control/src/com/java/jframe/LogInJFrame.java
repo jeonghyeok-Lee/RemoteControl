@@ -21,6 +21,7 @@ public class LogInJFrame extends JFrame {
 	JTextField txtID = null;
 	JPasswordField txtPW = null;
 	JLabel lbID = null, lbPW = null;
+	boolean checkProgram = false;
 	
 	UserDAO dao = null;
 	ArrayList<UserDTO> dto = null;
@@ -29,6 +30,7 @@ public class LogInJFrame extends JFrame {
 	
 	// checkProgram - 관리자인지 아닌지 유무 파악용
 	public LogInJFrame(boolean checkProgram) {
+		this.checkProgram = checkProgram;
 		setUI0(checkProgram);
 	}
 	
@@ -58,10 +60,10 @@ public class LogInJFrame extends JFrame {
 				if(!isStringEmpty(txtID.getText().toString()) && !isStringEmpty(txtPW.getText().toString())) {
 					dto = dao.userSelect("where user_id = '" + txtID.getText() +"'" );
 					System.out.println("ID : " + dto.get(0).getUserId() + " PW : " + dto.get(0).getUserPassword());
-					if(!checkProgram) {
-						new MasterJFrame();
-					}else {
+					if(checkProgram) {
 						new SlaveJFrame();						
+					}else {
+						new MasterJFrame();
 					}
 					dispose();
 						
@@ -77,7 +79,7 @@ public class LogInJFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				new AccountSignUp();
+				new AccountSignUp(checkProgram);
 
 			}
 			
