@@ -58,4 +58,27 @@ public class UserDAO {
 		}
 		return userDTO;
 	}
+	
+	public int userUpdate(String query) {
+		this.query = query;
+		int result = 0;
+		try {
+			conn = DriverManager.getConnection(dbInfo.getUrl(), dbInfo.getUid(), dbInfo.getPw());
+			stmt = conn.createStatement();
+			
+			result = stmt.executeUpdate(query);
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				if(rs != null) rs.close();
+				if(stmt != null) stmt.close();
+				if(conn != null) conn.close();
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
 }
