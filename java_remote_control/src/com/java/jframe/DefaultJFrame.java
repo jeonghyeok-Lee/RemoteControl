@@ -160,7 +160,6 @@ public class DefaultJFrame extends JFrame {
 		
 		contain = getContentPane();
 		contain.setLayout(new BorderLayout(10,3));
-		this.setLocationRelativeTo(null);
 		
 		northPanel = new JPanel();
 		centerPanel = new JPanel();
@@ -191,6 +190,7 @@ public class DefaultJFrame extends JFrame {
 		
 		setVisible(true);
 		setResizable(false);
+		this.setLocationRelativeTo(null);
 	}
 	
 	// 그룹박스 만들기 색상 / 두께 / 표시여부
