@@ -25,12 +25,14 @@ public class SlaveJFrame extends JFrame {
 	Socket socket = null;
 	DefaultJFrame jframe = null;
 	
+	SlaveConnectThread connectThread = null;
+	
 	public SlaveJFrame() {
 		setUI();
 	}
 	
 	private void setUI() {
-		jframe = new DefaultJFrame("슬레이브 프로그램", 500, 200);
+		jframe = new DefaultJFrame("슬레이브 프로그램", 500, 300);
 
 		JPanel center = jframe.getCenterPanel();
 		
@@ -42,25 +44,40 @@ public class SlaveJFrame extends JFrame {
 	
 	private JPanel setCenter() {
 		
-		JPanel panel = new JPanel(new GridLayout(4,2));
-		panel.add(new JLabel("Connect Server IP   : "));
-		panel.add(txtIp = new JTextField(15));
-		panel.add(new JLabel("Connect Server Port : "));
-		panel.add(txtPort = new JTextField(15));
-		panel.add(button = new JButton("연결하기"));
-		panel.add(labelResult = new JLabel("연결확인"));
-		panel.add(labelIP = new JLabel("Connect Server IP"));
-		panel.add(labelHost = new JLabel("Connect Server Host"));
+		JPanel panel = new JPanel(new GridLayout(0,1));
+		
+		JPanel first = new JPanel(new GridLayout(0,2));
+		first.add(new JLabel("Connect Server IP   : "));
+		first.add(txtIp = new JTextField(15));
+
+		JPanel second = new JPanel(new GridLayout(0,2));
+		second.add(new JLabel("Connect Server Port : "));
+		second.add(txtPort = new JTextField(15));
+		
+		JPanel third = new JPanel(new GridLayout(0,2));
+		third.add(new JLabel());
+		third.add(button = new JButton("연결하기"));
+		
+		JPanel fourth = new JPanel(new GridLayout(0,2));
+		fourth.add(labelIP = new JLabel("Connect Server IP"));
+		fourth.add(labelHost = new JLabel("Connect Server Host"));
+		
+		panel.add(first);
+		panel.add(second);
+		panel.add(third);
+		panel.add(fourth);
 		
 		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-				    socket = new Socket(txtIp.getText().toString(), Integer.parseInt(txtPort.getText()));
-				    Thread connectThread = new SlaveConnectThread(socket, labelResult, labelIP, labelHost);
-				    Thread communicationThread = new SlaveCoummunicationThread(socket);
-				    connectThread.start();
-				    communicationThread.start();
+					System.out.println(socket);
+					if(socket == null) {						
+						socket = new Socket(txtIp.getText().toString(), Integer.parseInt(txtPort.getText()));
+						connectThread = new SlaveConnectThread(socket, labelIP, labelHost);
+						connectThread.start();
+					}
+					
 				}catch(Exception e1) {
 					e1.getMessage();
 				}
@@ -68,44 +85,5 @@ public class SlaveJFrame extends JFrame {
 		});
 		
 		return panel;
-	}
-	
-	// 
-	private void setUI1() {
-		setTitle("슬레이브 프로그램");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		Container container = getContentPane();						// 현재 컴포넌트를 포함할 수 있는 컨테이너 가져옴
-		container.setLayout(new BorderLayout(3,3));
-		
-		JPanel panel = new JPanel(new GridLayout(4,2));
-		panel.add(new JLabel("Connect Server IP   : "));
-		panel.add(txtIp = new JTextField(15));
-		panel.add(new JLabel("Connect Server Port : "));
-		panel.add(txtPort = new JTextField(15));
-		panel.add(button = new JButton("연결하기"));
-		panel.add(labelResult = new JLabel("연결확인"));
-		panel.add(labelIP = new JLabel("Connect Server IP"));
-		panel.add(labelHost = new JLabel("Connect Server Host"));
-		
-		button.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-				    socket = new Socket(txtIp.getText().toString(), Integer.parseInt(txtPort.getText()));
-				    Thread connectThread = new SlaveConnectThread(socket, labelResult, labelIP, labelHost);
-				    Thread communicationThread = new SlaveCoummunicationThread(socket);
-				    connectThread.start();
-				    communicationThread.start();
-				}catch(Exception e1) {
-					e1.getMessage();
-				}
-			}
-		});
-		
-		container.add(panel, BorderLayout.NORTH);
-		
-		setSize(400,200);
-		setVisible(true);
 	}
 }
