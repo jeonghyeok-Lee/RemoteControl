@@ -58,7 +58,7 @@ public class MasterCoummunicationThread extends Thread implements Serializable {
 			System.out.println(str);
 			dataOutStream.writeUTF(str);
 			dataOutStream.flush();
-//			
+			
 		}catch(IOException e) {
 			e.printStackTrace();
 		}finally {

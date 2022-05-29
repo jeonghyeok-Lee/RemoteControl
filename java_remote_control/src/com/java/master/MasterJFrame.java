@@ -23,31 +23,32 @@ import com.java.utility.IpAddress;
 
 public class MasterJFrame extends JFrame {
 	// 연결된 슬레이브에 대한 정보를 담는 JLabel
-	JLabel labelIP = null
+	private JLabel labelIP = null
 			, labelHost = null
 			, labelResult = null;
 	
-	JButton btnDisConnect = null;
+	private JButton btnDisConnect = null;
 	
 	// 마스터에 대한 정보를 담는 JLabel
-	JLabel labelMyIp = null
+	private JLabel labelMyIp = null
 			, labelMyHost = null
 			, labelMyPort = null;
 	
-	JButton btnStart = null;
+	private JButton btnStart = null;
 	
-	MasterConnectThread connectThread =  null;
+	private boolean serverOnOff = false;
 	
-	int port = 9095;
 	
-	ServerSocket serverSocket = null;
-	Socket socket = null;
+	private ServerSocket serverSocket = null;
+	private Socket socket = null;
+	private MasterConnectThread connectThread =  null;
+	private int port = 9095;
 	
-	boolean connectCheck = false;
-	DefaultJFrame jframe = null;
+	private DefaultJFrame jframe = null;
 	
 	public MasterJFrame() {
 		setUI1();
+	
 	}
 
 	private void setUI1() {
@@ -82,16 +83,17 @@ public class MasterJFrame extends JFrame {
 		btnStart.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				
 				try {
-					if(serverSocket == null) {
-						serverSocket = new ServerSocket(port);
+					if(btnStart.getText().equals("ON")) {
 						btnStart.setText("OFF");
+						serverSocket = new ServerSocket(port);
 						connectThread = new MasterConnectThread(serverSocket, labelIP, labelHost);
 						connectThread.start();
 					}else {
-						connectThread.setStr(null);
-						System.out.println(connectThread.getStr());
-						serverSocket.close();
+						if(connectThread != null) connectThread.interrupt();
+						if(connectThread != null) serverSocket.close();
+						
 						labelIP.setText("000.000.000.000");
 						labelHost.setText("미접속");
 						labelResult.setText("연결확인");
@@ -137,10 +139,11 @@ public class MasterJFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				if(connectThread!=null) {
 					connectThread.interrupt();
+					System.out.println("connectThread 인터럽트");
+					
 					labelIP.setText("000.000.000.000");
 					labelHost.setText("미접속");
 					labelResult.setText("연결확인");
-					System.out.println("연결해제됨");
 				}else {
 					System.out.println("현재 연결이 되어있지 않습니다.");
 				}
