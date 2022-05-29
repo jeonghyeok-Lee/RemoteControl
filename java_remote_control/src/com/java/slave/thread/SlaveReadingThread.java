@@ -1,43 +1,34 @@
 package com.java.slave.thread;
 
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 import javax.swing.JLabel;
 
-public class SlaveConnectThread extends Thread {
-	Socket socket = null;
+// 서버에서 오는 값을 수행하는 스레드
+public class SlaveReadingThread extends Thread {
+	private Socket socket = null;
 	JLabel labelIP = null, labelHost = null;
+	DataInputStream dataInStream = null;
 	
-	public SlaveConnectThread(Socket socket,JLabel labelIP,JLabel labelHost) {
+	public SlaveReadingThread(Socket socket,JLabel labelIP,JLabel labelHost) {
 		this.socket = socket;
 		this.labelIP = labelIP;
 		this.labelHost = labelHost;
 	}
 	
 	public void run() {
-		DataInputStream dataInStream = null;
-		DataOutputStream dataOutStream = null;
-		InetAddress myNet = null;
 		try {
-			myNet = InetAddress.getLocalHost();
-			String hostName =  myNet.getHostName().toString();
-			dataOutStream = new DataOutputStream(socket.getOutputStream());
-			
+			// 서버에서 값을 받아오기 위한 InputStream
 			dataInStream = new DataInputStream(socket.getInputStream());
+			
+			// 값을 계속해서 수행하기 위한 반복문
 			while(true) {
-				
-				System.out.println("서버 연결 중");
-				
-				dataOutStream.writeUTF(hostName); // 문자열의 형태로 값 전달
-				dataOutStream.flush();
 				
 				String str = dataInStream.readUTF();
 				System.out.println(str);
-				
 				
 				String[] strSplit = str.split("-");
 				
@@ -45,7 +36,10 @@ public class SlaveConnectThread extends Thread {
 				labelHost.setText(strSplit[1]);
 				System.out.println("서버 연결 성공");
 			}
-			
+		}catch (UnknownHostException e) {
+			System.out.println("IP가 잘못됨\n"+e.getMessage());
+		}catch (IOException e) {
+			System.out.println("IOException 발생\n"+e.getMessage());
 		} catch(Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -56,8 +50,7 @@ public class SlaveConnectThread extends Thread {
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
-	}
+		}
 
 	}
-
 }

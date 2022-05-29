@@ -1,7 +1,5 @@
 package com.java.slave;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,18 +12,20 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.java.jframe.DefaultJFrame;
-import com.java.slave.thread.SlaveConnectThread;
-import com.java.slave.thread.SlaveCoummunicationThread;
+import com.java.slave.thread.SlaveReadingThread;
+import com.java.slave.thread.SlaveWritingThread;
 
 public class SlaveJFrame extends JFrame {
-	JTextField txtIp = null;
-	JTextField txtPort = null;
-	JLabel labelResult = null, labelIP = null, labelHost = null;
-	JButton button = null;	
-	Socket socket = null;
-	DefaultJFrame jframe = null;
 	
-	SlaveConnectThread connectThread = null;
+	private JTextField txtIp = null;
+	private JTextField txtPort = null;
+	private JLabel labelIP = null
+			, labelHost = null
+			, labelResut = null;
+	private JButton button = null;	
+	
+	private Socket socket = null;
+	private DefaultJFrame jframe = null;
 	
 	public SlaveJFrame() {
 		setUI();
@@ -55,7 +55,7 @@ public class SlaveJFrame extends JFrame {
 		second.add(txtPort = new JTextField(15));
 		
 		JPanel third = new JPanel(new GridLayout(0,2));
-		third.add(new JLabel());
+		third.add(labelResut = new JLabel("연결여부"));
 		third.add(button = new JButton("연결하기"));
 		
 		JPanel fourth = new JPanel(new GridLayout(0,2));
@@ -72,18 +72,33 @@ public class SlaveJFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					System.out.println(socket);
-					if(socket == null) {						
+					if(socket == null) {		
 						socket = new Socket(txtIp.getText().toString(), Integer.parseInt(txtPort.getText()));
-						connectThread = new SlaveConnectThread(socket, labelIP, labelHost);
-						connectThread.start();
+						
+						SlaveReadingThread rThread = new SlaveReadingThread(socket,labelIP,labelHost);
+						SlaveWritingThread wThread = new SlaveWritingThread(socket);
+						rThread.start();
+						wThread.start();
+						
+						txtIp.setText("");
+						txtPort.setText("");
+						labelIP.setText("Connect Server IP");
+						labelHost.setText("Connect Server Port");
+						labelResut.setText("연결중");
+					}else {
+						socket = null;
+						System.out.println("연결해제");
+						labelResut.setText("연결 전");
 					}
 					
 				}catch(Exception e1) {
 					e1.getMessage();
 				}
+
 			}
 		});
 		
 		return panel;
 	}
+	
 }
