@@ -1,9 +1,11 @@
 package com.java.master.thread;
 
 import java.awt.MouseInfo;
+import java.awt.Point;
 import java.awt.PointerInfo;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -39,6 +41,7 @@ public class MasterConnectThread extends Thread {
 		InetAddress myNet = null, inet = null;
 		DataOutputStream dataOutStream = null;
 		DataInputStream dataInStream = null;
+		ObjectOutputStream  objectOutStream = null;
 		String str = "";
 
 		try {
@@ -56,6 +59,8 @@ public class MasterConnectThread extends Thread {
 				// 슬레이브에 값 보내기
 				dataOutStream = new DataOutputStream(socket.getOutputStream());
 				
+				objectOutStream = new ObjectOutputStream(socket.getOutputStream());
+				
 				// 상대에게서 넘어온 문자열 즉, strValue을 문자열로 저장
 				String strValue = dataInStream.readUTF();
 				inet = socket.getInetAddress();
@@ -69,14 +74,21 @@ public class MasterConnectThread extends Thread {
 				
 				while (true) {
 
-					mPointer = MouseInfo.getPointerInfo();
-					str = mPointer.getLocation().x + "-" + mPointer.getLocation().y;
+//					mPointer = MouseInfo.getPointerInfo();
+//					str = mPointer.getLocation().x + "-" + mPointer.getLocation().y;
 					
 					sleep(1);
+//					
+//					System.out.println(str);
+//					dataOutStream.writeUTF(str);
+//					dataOutStream.flush();
 					
-					System.out.println(str);
-					dataOutStream.writeUTF(str);
-					dataOutStream.flush();
+					// 객체로 값 전달
+					Point mouse = MouseInfo.getPointerInfo().getLocation();
+					System.out.println("x : " + mouse.x + " y : "+ mouse.y);
+					objectOutStream.writeObject(mouse);
+					objectOutStream.flush();		
+					
 				}
 				
 
@@ -85,6 +97,7 @@ public class MasterConnectThread extends Thread {
 			System.out.println(e.getMessage());
 		} finally {
 			try {
+				if (objectOutStream != null) objectOutStream.close();
 				if (dataInStream != null) dataInStream.close();
 				if (dataOutStream != null) dataOutStream.close();
 				if (socket != null) socket.close();
