@@ -36,6 +36,7 @@ public class LogInJFrame extends JFrame {
 	
 	private void setUI0(boolean checkProgram) {
 		jframe = new DefaultJFrame("로그인 폼",450,220);
+		jframe.setPanel();
 		
 		dao = new UserDAO();
 		JPanel center = jframe.getCenterPanel();
@@ -65,7 +66,7 @@ public class LogInJFrame extends JFrame {
 					}else {
 						new MasterJFrame();
 					}
-					dispose();
+					jframe.dispose();
 						
 				}else {
 					System.out.println("ID/PW를 정확하게 입력하여주세요");

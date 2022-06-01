@@ -117,15 +117,16 @@ public class DefaultJFrame extends JFrame {
 	public void setGroup(JPanel group) {
 		this.group = group;
 	}
-
+	
 	// 기본 프레임을 생성해줄 생성자
 	public DefaultJFrame(String title, int xSize, int ySize) {
 		this.title = title;
 		this.xSize = xSize;
 		this.ySize = ySize;
-		setPanel();
+//		setPanel();
 			
 	}
+	
 	
 	// 알림창을 생성해줄 생성자(타이틀, x좌표, y좌표, 내용, 확인, 취소버튼여부)
 	public DefaultJFrame(String title, int xSize, int ySize, JLabel[] content, JButton btnOk, boolean btnNo) {
@@ -151,6 +152,16 @@ public class DefaultJFrame extends JFrame {
 			southPanel.add(btnCancel);
 		}
 			
+	}
+	
+	public void setPanelEmpty() {
+		setTitle(title);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		contain = getContentPane();
+		contain.setLayout(new BorderLayout(10,3));
+		
+		setSize(xSize, ySize);
 	}
 	
 	// 기본 세팅
@@ -188,6 +199,10 @@ public class DefaultJFrame extends JFrame {
 		contain.add(westPanel,BorderLayout.WEST);
 		contain.add(southPanel,BorderLayout.SOUTH);
 		
+		setFrameVisible();
+	}
+	
+	public void setFrameVisible() {
 		setVisible(true);
 		setResizable(false);
 		this.setLocationRelativeTo(null);

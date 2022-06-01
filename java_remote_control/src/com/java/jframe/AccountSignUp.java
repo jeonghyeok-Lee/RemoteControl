@@ -38,6 +38,7 @@ public class AccountSignUp extends JFrame {
 
 	private void setUI() {
 		jframe = new DefaultJFrame("회원가입", 600, 400);
+		jframe.setPanel();
 		// x 클릭시 현재 프레임만 종료
 		jframe.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
