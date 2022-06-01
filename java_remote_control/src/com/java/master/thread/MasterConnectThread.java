@@ -115,15 +115,22 @@ public class MasterConnectThread extends Thread {
 					}
 					
 					if(placeJframe != null && placeJframe.isKeyListen()) {
-						objectOutStream.writeObject(placeJframe.getKeycode());
+						objectOutStream.writeObject(placeJframe.getKey());
 						objectOutStream.flush();	
 						placeJframe.setKeyListen(false);
-						sleep(1);
+					}else if(placeJframe != null && placeJframe.isMouseWheelListen()){
+						objectOutStream.writeObject(placeJframe.getMouseWheel());
+						objectOutStream.flush();	
+						placeJframe.setMouseWheelListen(false);
+					}else if(placeJframe != null && placeJframe.isMouseListen()){
+						objectOutStream.writeObject(placeJframe.getMouse());
+						objectOutStream.flush();	
+						placeJframe.setMouseListen(false);
 					}else {
 						objectOutStream.writeObject(mouse);
 						objectOutStream.flush();	
-						sleep(1);
 					}
+					sleep(1);
 					
 				}
 				
