@@ -14,6 +14,7 @@ import javax.swing.JLabel;
 public class SlaveReadingThread extends Thread {
 	private Socket socket = null;
 	JLabel labelIP = null, labelHost = null;
+	boolean firstConnect = false;
 	
 	public SlaveReadingThread(Socket socket,JLabel labelIP,JLabel labelHost) {
 		this.socket = socket;
@@ -26,17 +27,15 @@ public class SlaveReadingThread extends Thread {
 		ObjectInputStream objectInStream = null;
 		Robot robot = null;	
 		
-		int com = 0;
-		
 		try {
 			// 서버에서 값을 받아오기 위한 InputStream
 			dataInStream = new DataInputStream(socket.getInputStream());
 			objectInStream = new ObjectInputStream(socket.getInputStream());
 			robot = new Robot();
 			// 값을 계속해서 수행하기 위한 반복문
+			System.out.println("while문 입구");
 			while(true) {
-				
-				if(com == 0) {
+				if(!firstConnect) {
 					String str = dataInStream.readUTF();
 					System.out.println(str);
 					
@@ -45,19 +44,30 @@ public class SlaveReadingThread extends Thread {
 					labelIP.setText(strSplit[0]);
 					labelHost.setText(strSplit[1]);
 					System.out.println("서버 연결 성공");
-				}else {
-					Point mouse = (Point)objectInStream.readObject();
-					robot.mouseMove(mouse.x, mouse.y);
+					firstConnect = true;
 				}
+				else {
+					Object value = objectInStream.readObject();
+					System.out.println(value.getClass().getSimpleName());
+					if(value instanceof Point) {
+						Point mouse = (Point)value;
+//						robot.mouseMove(mouse.x, mouse.y);
+//						System.out.println("x : " + mouse.x + " y : "+ mouse.y);
+						
+					}else if(value instanceof Integer){
+						int keycode = (Integer)value;
+//						robot.keyPress(keycode);
+						System.out.println("keycode : " + keycode);
+					}
+				}			
 			}
 		}catch (UnknownHostException e) {
 			System.out.println("IP가 잘못됨\n"+e.getMessage());
 		}catch (IOException e) {
-			System.out.println("IOException 발생\n"+e.getMessage());
+			System.out.println("IOException 발생-Read\n"+e.getMessage());
 		} catch(Exception e) {
 			e.printStackTrace();
 		} finally {
-			System.out.println("연결 해제됨");
 			try {
 				if(objectInStream != null) objectInStream.close();
 				if(dataInStream != null) dataInStream.close();
