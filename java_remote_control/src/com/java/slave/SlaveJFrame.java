@@ -3,6 +3,7 @@ package com.java.slave;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.net.Socket;
 
 import javax.swing.JButton;
@@ -33,7 +34,7 @@ public class SlaveJFrame extends JFrame {
 	
 	private void setUI() {
 		jframe = new DefaultJFrame("슬레이브 프로그램", 500, 300);
-
+		jframe.setPanel();
 		JPanel center = jframe.getCenterPanel();
 		
 		center.add(setCenter());
@@ -71,7 +72,7 @@ public class SlaveJFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					System.out.println(socket);
+
 					if(socket == null) {		
 						socket = new Socket(txtIp.getText().toString(), Integer.parseInt(txtPort.getText()));
 						
@@ -86,11 +87,17 @@ public class SlaveJFrame extends JFrame {
 						labelHost.setText("Connect Server Port");
 						labelResut.setText("연결중");
 					}else {
-						socket = null;
+						// 소켓이 현재 열려있는지 확인
+						System.out.println(!socket.isClosed());
+						if(!socket.isClosed()) {
+							socket.close();
+							System.out.println("클라이언트 소켓을 닫음");
+						}
 						System.out.println("연결해제");
 						labelResut.setText("연결 전");
 					}
 					
+					System.out.println(socket);
 				}catch(Exception e1) {
 					e1.getMessage();
 				}
