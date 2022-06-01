@@ -34,11 +34,10 @@ public class SlaveWritingThread extends Thread {
 		}catch (UnknownHostException e) {
 			System.out.println("IP가 잘못됨\n"+e.getMessage());
 		}catch (IOException e) {
-			System.out.println("IOException 발생\n"+e.getMessage());
+			System.out.println("IOException 발생-Write\n"+e.getMessage());
 		} catch(Exception e) {
 			e.printStackTrace();
 		} finally {
-			System.out.println("연결 해제됨");
 			try {
 				if(dataOutStream != null) dataOutStream.close();
 				if(socket != null) socket.close();
