@@ -1,9 +1,13 @@
 package com.java.master;
 
 import java.awt.Color;
-import java.awt.Event;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
 import javax.swing.JFrame;
 
@@ -14,21 +18,49 @@ public class MasterExecutionJFrame extends JFrame {
 	
 	private Screen screen = null;
 	private DefaultJFrame jframe = null;
-	private int keycode = 0;
-	private boolean keyListen = false;
 	
+	private boolean keyListen = false;
+	private boolean mouseListen = false;
+	private boolean mouseWheelListen = false;
+
+	private KeyEvent key = null;
+
+	private MouseEvent mouse = null;
+	
+	private MouseWheelEvent mouseWheel = null;
+	
+	public KeyEvent getKey() {
+		return key;
+	}
+	
+	public boolean isMouseWheelListen() {
+		return mouseWheelListen;
+	}
+
+	public void setMouseWheelListen(boolean mouseWheelListen) {
+		this.mouseWheelListen = mouseWheelListen;
+	}
+
+	public MouseWheelEvent getMouseWheel() {
+		return mouseWheel;
+	}
+
+	public MouseEvent getMouse() {
+		return mouse;
+	}
+
+	public boolean isMouseListen() {
+		return mouseListen;
+	}
+
+
+	public void setMouseListen(boolean mouseListen) {
+		this.mouseListen = mouseListen;
+	}
+
+
 	public void setKeyListen(boolean keyListen) {
 		this.keyListen = keyListen;
-	}
-
-
-	public int getKeycode() {
-		return keycode;
-	}
-
-
-	public void setKeycode(int keycode) {
-		this.keycode = keycode;
 	}
 
 
@@ -54,6 +86,7 @@ public class MasterExecutionJFrame extends JFrame {
 		jframe.setBackground(new Color(0,0,0,100));
 		
 		jframe.requestFocus();
+		// 키보드 리스너
 		jframe.addKeyListener(new KeyListener() {
 			@Override
 			public void keyTyped(KeyEvent e) {
@@ -72,14 +105,82 @@ public class MasterExecutionJFrame extends JFrame {
 
 			@Override
 			public void keyPressed(KeyEvent e) {
-				keycode = e.getKeyCode();
-				System.out.println(keycode);
+				key = e;
 				keyListen = true;
 	        }
 
 			@Override
 			public void keyReleased(KeyEvent e) {
+
+				
 			}
+		});
+		
+		// 마우스리스너
+		jframe.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				mouse = e;
+				System.out.println(mouse);
+				mouseListen = true;
+				
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
+		
+		jframe.addMouseMotionListener(new MouseMotionListener() {
+
+			@Override
+			public void mouseDragged(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			
+			// 추후 마우스 움직임을 여기서 계산
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
+		
+		// 마우스 휠 이동용 리스너
+		jframe.addMouseWheelListener(new MouseWheelListener () {
+
+			@Override
+			public void mouseWheelMoved(MouseWheelEvent e) {
+				mouseWheel = e;
+				mouseWheelListen = true;
+				
+			}
+			
 		});
 
 		
