@@ -1,16 +1,25 @@
 package com.java.master.thread;
 
+import java.awt.AWTEvent;
 import java.awt.MouseInfo;
 import java.awt.Point;
-import java.awt.PointerInfo;
+import java.awt.Toolkit;
+import java.awt.event.AWTEventListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+
+import com.java.master.MasterExecutionJFrame;
+import com.java.utility.Screen;
 
 public class MasterConnectThread extends Thread {
 	
@@ -18,8 +27,18 @@ public class MasterConnectThread extends Thread {
 	private Socket socket = null;
 
 	private ServerSocket server = null;
-	private PointerInfo mPointer = null;
-
+	
+	private JFrame jframe = null;
+	
+	private boolean chkPlace = false;
+	
+	private int keycode = 0;
+	private boolean keyListen = false;
+	
+	public MasterConnectThread() {
+		// TODO Auto-generated constructor stub
+	}
+	
 	public MasterConnectThread(ServerSocket server, JLabel labelIP, JLabel labelHost) {
 		this.server = server;
 		this.labelIP = labelIP;
@@ -31,10 +50,18 @@ public class MasterConnectThread extends Thread {
 		this.labelIP = labelIP;
 		this.labelHost = labelHost;
 	}
+	
+	public MasterConnectThread(ServerSocket server, JLabel labelIP, JLabel labelHost, JFrame jframe) {
+		this.server = server;
+		this.labelIP = labelIP;
+		this.labelHost = labelHost;
+		this.jframe = jframe;
+	}
 
 	// 지속 접속
 	public void run() {
 		run2();
+
 	}
 
 	public void run2() {
@@ -43,9 +70,14 @@ public class MasterConnectThread extends Thread {
 		DataInputStream dataInStream = null;
 		ObjectOutputStream  objectOutStream = null;
 		String str = "";
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+		Screen screen = new Screen();
+		MasterExecutionJFrame placeJframe = null;
 
 		try {
 			myNet = InetAddress.getLocalHost();
+//			toolkit.addAWTEventListener(new Listener(), AWTEvent.MOUSE_EVENT_MASK | AWTEvent.FOCUS_EVENT_MASK);
+			
 			// 연결해제 연결을 지속하기 위한 while문
 			while (true) {
 				System.out.println("소켓 대기");
@@ -57,8 +89,7 @@ public class MasterConnectThread extends Thread {
 				// 슬레이브에서 보낸 값 읽기
 				dataInStream = new DataInputStream(socket.getInputStream());
 				// 슬레이브에 값 보내기
-				dataOutStream = new DataOutputStream(socket.getOutputStream());
-				
+				dataOutStream = new DataOutputStream(socket.getOutputStream());			
 				objectOutStream = new ObjectOutputStream(socket.getOutputStream());
 				
 				// 상대에게서 넘어온 문자열 즉, strValue을 문자열로 저장
@@ -73,25 +104,30 @@ public class MasterConnectThread extends Thread {
 				dataOutStream.flush();
 				
 				while (true) {
-
-//					mPointer = MouseInfo.getPointerInfo();
-//					str = mPointer.getLocation().x + "-" + mPointer.getLocation().y;
-					
-					sleep(1);
-//					
-//					System.out.println(str);
-//					dataOutStream.writeUTF(str);
-//					dataOutStream.flush();
+			
 					
 					// 객체로 값 전달
 					Point mouse = MouseInfo.getPointerInfo().getLocation();
-					System.out.println("x : " + mouse.x + " y : "+ mouse.y);
-					objectOutStream.writeObject(mouse);
-					objectOutStream.flush();		
+					if(mouse.x == 0 && !chkPlace) {
+						mouse.setLocation(screen.getWidth(), (double)mouse.y);
+						placeJframe = new MasterExecutionJFrame();
+						chkPlace = true;
+					}
+					
+					if(placeJframe != null && placeJframe.isKeyListen()) {
+						objectOutStream.writeObject(placeJframe.getKeycode());
+						objectOutStream.flush();	
+						placeJframe.setKeyListen(false);
+						sleep(1);
+					}else {
+						objectOutStream.writeObject(mouse);
+						objectOutStream.flush();	
+						sleep(1);
+					}
 					
 				}
 				
-
+				
 			}
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -107,5 +143,15 @@ public class MasterConnectThread extends Thread {
 			}
 		}
 	}
+	
+    private static class Listener implements AWTEventListener {
+    	
+        public void eventDispatched(AWTEvent event) {
+            System.out.print(MouseInfo.getPointerInfo().getLocation() + " | ");
+            System.out.println(event);
+
+        }
+
+    }
 
 }
