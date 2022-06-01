@@ -2,6 +2,9 @@ package com.java.slave.thread;
 
 import java.awt.Point;
 import java.awt.Robot;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -51,13 +54,20 @@ public class SlaveReadingThread extends Thread {
 					System.out.println(value.getClass().getSimpleName());
 					if(value instanceof Point) {
 						Point mouse = (Point)value;
-//						robot.mouseMove(mouse.x, mouse.y);
-//						System.out.println("x : " + mouse.x + " y : "+ mouse.y);
-						
-					}else if(value instanceof Integer){
-						int keycode = (Integer)value;
-//						robot.keyPress(keycode);
-						System.out.println("keycode : " + keycode);
+						robot.mouseMove(mouse.x, mouse.y);
+					}else if(value instanceof KeyEvent){
+						KeyEvent key = (KeyEvent)value;
+						robot.keyPress(key.getKeyCode());
+						System.out.println("keycode : " + key.getKeyCode());
+					}else if(value instanceof MouseWheelEvent) {
+						MouseWheelEvent e = (MouseWheelEvent)value;
+						robot.mouseWheel(e.getWheelRotation());
+						System.out.println("휠이동");
+					}else if(value instanceof MouseEvent) {
+						MouseEvent e = (MouseEvent)value;
+						robot.mousePress(e.getMaskForButton(e.getButton()));
+						robot.mouseRelease(e.getMaskForButton(e.getButton()));
+						System.out.println("마우스 클릭");
 					}
 				}			
 			}
