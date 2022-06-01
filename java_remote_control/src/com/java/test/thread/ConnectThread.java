@@ -1,4 +1,4 @@
-package com.java.thread;
+package com.java.test.thread;
 
 import java.net.InetAddress;
 import java.net.Socket;

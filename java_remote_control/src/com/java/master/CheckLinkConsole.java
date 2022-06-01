@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import com.java.thread.CheckLinkConsoleThread;
+import com.java.test.thread.CheckLinkConsoleThread;
 
 public class CheckLinkConsole {
 	private final int port = 9095;
