@@ -35,6 +35,7 @@ public class SlaveWritingThread extends Thread {
 			System.out.println("IP가 잘못됨\n"+e.getMessage());
 		}catch (IOException e) {
 			System.out.println("IOException 발생-Write\n"+e.getMessage());
+			
 		} catch(Exception e) {
 			e.printStackTrace();
 		} finally {

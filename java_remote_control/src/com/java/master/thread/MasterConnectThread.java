@@ -3,13 +3,11 @@ package com.java.master.thread;
 import java.awt.AWTEvent;
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -73,6 +71,7 @@ public class MasterConnectThread extends Thread {
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
 		Screen screen = new Screen();
 		MasterExecutionJFrame placeJframe = null;
+		Point mouse = null;
 
 		try {
 			myNet = InetAddress.getLocalHost();
@@ -87,16 +86,18 @@ public class MasterConnectThread extends Thread {
 				System.out.println("연결 확인");
 				
 				// 슬레이브에서 보낸 값 읽기
-				dataInStream = new DataInputStream(socket.getInputStream());
+//				dataInStream = new DataInputStream(socket.getInputStream());
 				// 슬레이브에 값 보내기
 				dataOutStream = new DataOutputStream(socket.getOutputStream());			
 				objectOutStream = new ObjectOutputStream(socket.getOutputStream());
 				
-				// 상대에게서 넘어온 문자열 즉, strValue을 문자열로 저장
-				String strValue = dataInStream.readUTF();
+				// 상대에게서 넘어온 문자열 즉, strValue에 넘어온 문자열을 저장
+//				String strValue = dataInStream.readUTF();
+				// 현재 소켓의 ip를 가져옴
 				inet = socket.getInetAddress();
+				String hostName = socket.getInetAddress().getLocalHost().getHostName().toString();
 				labelIP.setText(inet.getHostAddress().toString());
-				labelHost.setText(strValue);
+				labelHost.setText(hostName);
 
 				// 슬레이브에게 보낼 값 정의
 				str = "Connect IP : " + myNet.getHostAddress().toString() + "-ConnectHostName :" + myNet.getHostName().toString();
@@ -105,15 +106,15 @@ public class MasterConnectThread extends Thread {
 				
 				while (true) {
 			
-					
-					// 객체로 값 전달
-					Point mouse = MouseInfo.getPointerInfo().getLocation();
+					mouse = MouseInfo.getPointerInfo().getLocation();
+//					System.out.println("x :"+mouse.x + " checkPlace : "+ chkPlace);
 					if(mouse.x == 0 && !chkPlace) {
-						mouse.setLocation(screen.getWidth(), (double)mouse.y);
+						new Robot().mouseMove((int) screen.getWidth(),mouse.y);
 						placeJframe = new MasterExecutionJFrame();
 						chkPlace = true;
 					}
 					
+					// 객체로 값 전달
 					if(placeJframe != null && placeJframe.isKeyListen()) {
 						objectOutStream.writeObject(placeJframe.getKey());
 						objectOutStream.flush();	
@@ -141,7 +142,7 @@ public class MasterConnectThread extends Thread {
 		} finally {
 			try {
 				if (objectOutStream != null) objectOutStream.close();
-				if (dataInStream != null) dataInStream.close();
+//				if (dataInStream != null) dataInStream.close();
 				if (dataOutStream != null) dataOutStream.close();
 				if (socket != null) socket.close();
 				System.out.println("소켓 닫기");
