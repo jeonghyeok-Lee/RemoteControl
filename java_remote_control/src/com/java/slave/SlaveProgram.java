@@ -7,7 +7,5 @@ public class SlaveProgram {
 	public static void main(String[] args) {
 //		new LogInJFrame(true);
 //		new SlaveJFrame();
-//		new LinkConsole().checkLinkConsole();
-
 	}
 }
