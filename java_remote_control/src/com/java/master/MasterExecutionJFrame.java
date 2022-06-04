@@ -1,6 +1,8 @@
 package com.java.master;
 
+import java.awt.AWTException;
 import java.awt.Color;
+import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -29,6 +31,7 @@ public class MasterExecutionJFrame extends JFrame {
 	
 	private MouseWheelEvent mouseWheel = null;
 	
+
 	public KeyEvent getKey() {
 		return key;
 	}
@@ -96,6 +99,7 @@ public class MasterExecutionJFrame extends JFrame {
 	             if((e.getModifiers() & 1) != 0){ // 1은 shift, 2는 Ctrl키 입니다.
 	                 //이를 & 연산을하여 같으면 0이아닌 숫자를 반환함으로  해당 키가 눌림을 확인 할 수 있습니다.
 	                 System.out.printf("shift를 눌렀습니다.\n");
+	                 
 	             }else
 	             {
 	                 System.out.printf("shift를 누르지 않았습니다.\n");
@@ -165,7 +169,20 @@ public class MasterExecutionJFrame extends JFrame {
 			// 추후 마우스 움직임을 여기서 계산
 			@Override
 			public void mouseMoved(MouseEvent e) {
-				// TODO Auto-generated method stub
+				try {
+					System.out.println(e.getX());
+					if(e.getX() == (int)new Screen().getWidth()-1) {
+						new Robot().mouseMove(0, e.getY());
+//						jframeDispose = true;
+						//지금 만들어야하는것은 해당 마우스값이 가장 우측으로 갈 경우 
+						// 해당 jframe을 종료하고 마우스 값이동을 대기
+						
+						
+					}
+				} catch (AWTException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				
 			}
 			
