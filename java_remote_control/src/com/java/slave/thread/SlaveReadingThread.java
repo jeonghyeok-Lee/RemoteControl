@@ -82,6 +82,8 @@ public class SlaveReadingThread extends Thread {
 				if(objectInStream != null) objectInStream.close();
 				if(dataInStream != null) dataInStream.close();
 				if(socket != null) socket.close();
+				labelIP.setText("Connect Server IP");
+				labelHost.setText("Connect Server Port");
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
