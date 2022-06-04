@@ -18,6 +18,7 @@ public class SlaveReadingThread extends Thread {
 	private Socket socket = null;
 	JLabel labelIP = null, labelHost = null;
 	boolean firstConnect = false;
+	boolean checkStart =  false; // 마스터의 활동영역이 연결되었을 경우 true
 	
 	public SlaveReadingThread(Socket socket,JLabel labelIP,JLabel labelHost) {
 		this.socket = socket;
@@ -54,7 +55,8 @@ public class SlaveReadingThread extends Thread {
 					System.out.println(value.getClass().getSimpleName());
 					if(value instanceof Point) {
 						Point mouse = (Point)value;
-						robot.mouseMove(mouse.x, mouse.y);
+						if(mouse.x == 0) checkStart = true;
+						if(checkStart) robot.mouseMove(mouse.x, mouse.y);
 					}else if(value instanceof KeyEvent){
 						KeyEvent key = (KeyEvent)value;
 						robot.keyPress(key.getKeyCode());
