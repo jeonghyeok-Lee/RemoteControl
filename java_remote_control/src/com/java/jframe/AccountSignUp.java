@@ -16,16 +16,18 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.border.LineBorder;
 
 import com.java.db.dao.UserDAO;
 import com.java.db.dto.UserDTO;
 import com.java.utility.EmailSend;
 
+// 회원가입을 위한 JFrame
 public class AccountSignUp extends JFrame {
-	private boolean checkProgram = false; // 마스터인지 슬레이브인지 구분을 위한
-	private int number = 0; // 인증번호를 담는 변수
+	private boolean checkProgram = false; 								// 마스터인지 슬레이브인지 구분을 위한
+	private int number = 0; 											// 인증번호를 담는 변수
 	private DefaultJFrame jframe = null;
-	private int count = 0; // 인증요청을 시도했는지 체크하기 위한 변수
+	private int count = 0; 												// 인증요청을 시도했는지 체크하기 위한 변수
 	private boolean chkID = false, chkPw = false, chkEmail = false;  
 
 	UserDAO dao = null;
@@ -39,6 +41,7 @@ public class AccountSignUp extends JFrame {
 	private void setUI() {
 		jframe = new DefaultJFrame("회원가입", 600, 400);
 		jframe.setPanel();
+		
 		// x 클릭시 현재 프레임만 종료
 		jframe.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
@@ -51,7 +54,7 @@ public class AccountSignUp extends JFrame {
 		jframe.addContain();
 
 	}
-
+	
 	private JPanel setCenter() {
 
 		JPanel group = jframe.addGroupBox(Color.white, 1, true);
