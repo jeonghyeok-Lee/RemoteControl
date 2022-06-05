@@ -18,23 +18,23 @@ import com.java.master.MasterJFrame;
 import com.java.slave.SlaveJFrame;
 
 public class LogInJFrame extends JFrame {
-	JTextField txtID = null;
-	JPasswordField txtPW = null;
-	JLabel lbID = null, lbPW = null;
-	boolean checkProgram = false;
+	private JTextField txtID = null;
+	private JPasswordField txtPW = null;
+	private JLabel lbID = null, lbPW = null;
+	private boolean checkProgram = false;
 	
-	UserDAO dao = null;
-	ArrayList<UserDTO> dto = null;
+	private UserDAO dao = null;
+	private ArrayList<UserDTO> dto = null;
 	
-	DefaultJFrame jframe = null;
+	private DefaultJFrame jframe = null;
 	
 	// checkProgram - 관리자인지 아닌지 유무 파악용
 	public LogInJFrame(boolean checkProgram) {
 		this.checkProgram = checkProgram;
-		setUI0(checkProgram);
+		setUI(checkProgram);
 	}
 	
-	private void setUI0(boolean checkProgram) {
+	private void setUI(boolean checkProgram) {
 		jframe = new DefaultJFrame("로그인 폼",450,220);
 		jframe.setPanel();
 		
@@ -48,7 +48,7 @@ public class LogInJFrame extends JFrame {
 	}
 	
 	private JPanel setCenter(boolean checkProgram) {
-		JPanel centerContent = new JPanel(new GridLayout(3,2,10,10));
+		JPanel centerContent = new JPanel(new GridLayout(0,2,10,10));
 		JPanel btnContentLeft = new JPanel(new GridLayout(0,2));
 		JPanel btnContentRight = new JPanel(new GridLayout(0,2,10,10));
 		
@@ -59,12 +59,13 @@ public class LogInJFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				
 				if(!isStringEmpty(txtID.getText().toString()) && !isStringEmpty(txtPW.getText().toString())) {
-					dto = dao.userSelect("where user_id = '" + txtID.getText() +"'" );
+					dto = dao.userSelect("where user_id = '" + txtID.getText() +"' and user_password = '"+txtPW.getText()+"'"  );
 					System.out.println("ID : " + dto.get(0).getUserId() + " PW : " + dto.get(0).getUserPassword());
-					if(checkProgram) {
+					if(checkProgram) {	// 슬레이브쪽에서 로그인 시도 시 
 						new SlaveJFrame();						
-					}else {
-						new MasterJFrame();
+					}else {				// 마스터쪽에서 로그인 시도 시
+//						new MasterJFrame();
+						new MasterJFrame(txtID.getText(),txtPW.getText());
 					}
 					jframe.dispose();
 						
