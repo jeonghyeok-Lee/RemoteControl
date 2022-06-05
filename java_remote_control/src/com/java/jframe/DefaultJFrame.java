@@ -118,7 +118,7 @@ public class DefaultJFrame extends JFrame {
 		this.group = group;
 	}
 	
-	// 기본 프레임을 생성해줄 생성자
+	// 기본 프레임을 생성해줄 생성자 <생성자 생성 -> setPanel -> setContain>
 	public DefaultJFrame(String title, int xSize, int ySize) {
 		this.title = title;
 		this.xSize = xSize;
@@ -154,6 +154,7 @@ public class DefaultJFrame extends JFrame {
 			
 	}
 	
+	// 비어있는 컨테이너 형태
 	public void setPanelEmpty() {
 		setTitle(title);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -164,7 +165,7 @@ public class DefaultJFrame extends JFrame {
 		setSize(xSize, ySize);
 	}
 	
-	// 기본 세팅
+	// 기본 Layout이 BorderLayout으로 각 영역에 패널을 기본으로 설정
 	public void setPanel() {
 		setTitle(title);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -190,7 +191,7 @@ public class DefaultJFrame extends JFrame {
 		addContaionEmpty();
 	}
 	
-	// 버전과 로고가 없는 Container
+	// 버전과 로고가 없이 컨테이너에 부착
 	public void addContaionEmpty() {
 		
 		contain.add(northPanel,BorderLayout.NORTH);
