@@ -59,6 +59,7 @@ public class UserDAO {
 		return userDTO;
 	}
 	
+	// user 테이블 수정
 	public int userUpdate(String query) {
 		this.query = query;
 		int result = 0;
