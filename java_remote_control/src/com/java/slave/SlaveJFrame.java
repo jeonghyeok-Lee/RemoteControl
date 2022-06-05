@@ -1,12 +1,14 @@
 package com.java.slave;
 
+import java.awt.CardLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.net.Socket;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -14,7 +16,6 @@ import javax.swing.JTextField;
 
 import com.java.jframe.DefaultJFrame;
 import com.java.slave.thread.SlaveReadingThread;
-import com.java.slave.thread.SlaveWritingThread;
 
 public class SlaveJFrame extends JFrame {
 	
@@ -33,29 +34,32 @@ public class SlaveJFrame extends JFrame {
 	
 	private boolean connected = false;
 	
+	private boolean nonLogIn = false; // 비회원으로 접근했는지 확인용 비회원 = true
+	
+	CardLayout card = null;
+	JPanel centerContent = null;
+	
 	public SlaveJFrame() {
 		setUI();
 	}
 	
-	private void setUI() {
-		jframe = new DefaultJFrame("슬레이브 프로그램", 500, 300);
-		jframe.setPanel();
-		JPanel center = jframe.getCenterPanel();
-		
-		center.add(setCenter());
-		
-		jframe.addContain();
+	public SlaveJFrame(boolean nonLogIn) {
+		this.nonLogIn = nonLogIn;
 		
 	}
 	
-	private JPanel setCenter() {
+	private void setUI() {
+		jframe = new DefaultJFrame("슬레이브 프로그램", 450, 300);
+		jframe.setPanel();
+		JPanel center = jframe.getCenterPanel();
+		if(!nonLogIn) {// 회원일 경우
+			JPanel east = jframe.getEastPanel();
+		}
 		
-		JPanel panel = new JPanel(new GridLayout(0,1));
+		center.setLayout(new GridLayout(0,1));
+		center.add(setCenter());
 		
-		JPanel first = new JPanel(new GridLayout(0,2));
-		JPanel second = new JPanel(new GridLayout(0,2));
-		JPanel third = new JPanel(new GridLayout(0,2));
-		JPanel fourth = new JPanel(new GridLayout(0,2));
+		JPanel rap = new JPanel(new GridLayout(0,3));
 		
 		button = new JButton("연결하기");
 		button.addActionListener(new ActionListener() {
@@ -73,7 +77,7 @@ public class SlaveJFrame extends JFrame {
 						
 						txtIp.setText("");
 						txtPort.setText("");
-						labelResut.setText("연결중");
+						card.show(centerContent, "connect");
 						
 					}else { 	
 						// socket이 null이 아닌 경우 버튼이 눌렸던 적이 있음 -> 실행된 경력이 있음 
@@ -83,8 +87,8 @@ public class SlaveJFrame extends JFrame {
 							if(rThread.getState() != Thread.State.TERMINATED) rThread.interrupt();
 //							if(wThread.getState() != Thread.State.TERMINATED) wThread.interrupt();
 							if(!socket.isClosed()) socket.close();
+							card.show(centerContent, "disconnect");
 							
-							labelResut.setText("연결 전");
 						}else { 							// 소켓이 현재 닫혀있다면
 							socket = new Socket(txtIp.getText().toString(), Integer.parseInt(txtPort.getText()));
 							
@@ -95,7 +99,7 @@ public class SlaveJFrame extends JFrame {
 							
 							txtIp.setText("");
 							txtPort.setText("");
-							labelResut.setText("연결중");
+							card.show(centerContent, "connect");
 						}
 					}
 					
@@ -107,24 +111,82 @@ public class SlaveJFrame extends JFrame {
 
 			}
 		});
+
+		JComponent[] component = new JComponent[] {
+			new JLabel(),new JLabel(),new JLabel(),
+			new JLabel(),button,new JLabel(),
+			new JLabel(),new JLabel(),new JLabel()
+		};
 		
+		for(JComponent com : component) {
+			rap.add(com);
+		}
+		
+		center.add(rap);
+		
+		jframe.addContain();
+		
+	}
+
+	// 중앙 컴포넌트를 설정
+	private JPanel setCenter() {
+		
+		card = new CardLayout();
+		
+		centerContent = new JPanel(card);
+		
+		centerContent.add(setCenterConnected(),"connect");
+		centerContent.add(setCenterDisConnected(),"disconnect");
+		
+		card.show(centerContent, "disconnect");
+		
+		return centerContent;
+	}
+	
+	// 연결된 상태일때의 영역을 보여주는 판넬
+	private JPanel setCenterConnected() {
+		
+		JPanel panel = new JPanel(new GridLayout(0,1));
+		
+		JPanel first = new JPanel(new GridLayout(0,2));
+		JPanel second = new JPanel(new GridLayout(0,2));
+		
+		first.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		second.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		
 		first.add(new JLabel("Connect Server IP   : "));
-		first.add(txtIp = new JTextField(15));
+		first.add(labelIP = new JLabel("Connect Server IP"));
+
 		second.add(new JLabel("Connect Server Port : "));
-		second.add(txtPort = new JTextField(15));
-		third.add(labelResut = new JLabel("연결여부"));
-		third.add(button);
-		fourth.add(labelIP = new JLabel("Connect Server IP"));
-		fourth.add(labelHost = new JLabel("Connect Server Host"));
+		second.add(labelHost = new JLabel("Connect Server Host"));
+
 		
 		panel.add(first);
 		panel.add(second);
-		panel.add(third);
-		panel.add(fourth);
-		
 		
 		return panel;
 	}
 	
+	// 연결되지 않은 상태일때의 영역을 보여주는 판넬
+	private JPanel setCenterDisConnected() {
+		
+		JPanel panel = new JPanel(new GridLayout(0,1));
+		
+		JPanel first = new JPanel(new GridLayout(0,2));
+		JPanel second = new JPanel(new GridLayout(0,2));
+		
+		first.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		second.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		
+		first.add(new JLabel("Connect Server IP   : "));
+		first.add(txtIp = new JTextField(15));
+
+		second.add(new JLabel("Connect Server Port : "));
+		second.add(txtPort = new JTextField(15));
+
+		panel.add(first);
+		panel.add(second);
+		
+		return panel;
+	}
 }
