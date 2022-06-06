@@ -58,7 +58,7 @@ public class UsageRecordDAO {
 	}
 	
 	// usage_record 테이블 수정
-	public int userUpdate(String query) {
+	public int usageUpdate(String query) {
 		this.query = query;
 		int result = 0;
 		try {
