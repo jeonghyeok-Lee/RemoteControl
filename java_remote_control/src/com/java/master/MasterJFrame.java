@@ -29,8 +29,7 @@ import com.java.utility.RegularExpression;
 public class MasterJFrame extends JFrame {
 	// 연결된 슬레이브에 대한 정보를 담는 JLabel
 	private JLabel labelIP = null
-			, labelHost = null
-			, labelResult = null;
+			, labelHost = null;
 	
 	private JButton btnDisConnect = null;
 	
@@ -40,25 +39,29 @@ public class MasterJFrame extends JFrame {
 			, labelMyPort = null;
 	
 	private JButton btnStart = null;
-	
 	private UserDAO dao = null;
 	private ArrayList<UserDTO> dto = null;
 	private String id = null, pw = null;
-	private int userNo = 0; //유저번호
-	
-	private Timer timer = null;
-	
-	private ServerSocket serverSocket = null;
-	
+	private int userNo = 0; 						//유저번호
+	private Timer timer = null; 					// 연결시간을 출력하기 위한 타이머
+	private ServerSocket serverSocket = null;		// 서버소켓
 	private MasterConnectThread connectThread =  null;
-	private final static int PORT = 9095;
-	
-	private DefaultJFrame jframe = null;
+	private final static int PORT = 9095;			// 포트
+	private DefaultJFrame jframe = null;			
 	private JPanel west = null, east = null;
+	private CardLayout card = null;					// 동쪽 배치관리자
+	private JPanel eastContent = null;				// 동쪽 내용
+	private MasterJFrame myJFrame = null;			// 자기자신
 	
-	private CardLayout card = null;
-	JPanel eastContent = null;
-	
+	public JLabel getLabelIP() {
+		return labelIP;
+	}
+
+	public JLabel getLabelHost() {
+		return labelHost;
+	}
+
+
 	// 지금은 간단하게 화면을 테스트하기위해서 남겨둠
 	public MasterJFrame() {
 		setUI1();
@@ -70,6 +73,8 @@ public class MasterJFrame extends JFrame {
 		this.pw = pw;
 		
 		setUI1();
+		// 생성되면 해당 생성된 프레임을 myJFrame에
+		myJFrame = this;
 	}
 
 	private void setUI1() {
@@ -101,7 +106,7 @@ public class MasterJFrame extends JFrame {
 		eastContent.add(setEastAccount(),"account");
 		eastContent.add(setEastOption(),"option");
 		
-		eastContent.setBorder(BorderFactory.createEmptyBorder(10, 30, 10, 10));
+		eastContent.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		card.show(eastContent, "controller");
 		
 		return eastContent;
@@ -118,7 +123,7 @@ public class MasterJFrame extends JFrame {
 
 		eastContent.setLayout(new GridLayout(0, 2));
 		// 여백주기 시계 반대 방향
-		eastContent.setBorder(BorderFactory.createEmptyBorder(30, 50, 30, 50));
+		eastContent.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
 
 		btnStart = new JButton("ON");
 		btnStart.addActionListener(new ActionListener() {
@@ -130,10 +135,9 @@ public class MasterJFrame extends JFrame {
 					if(btnStart.getText().equals("ON")) {
 						btnStart.setText("OFF");
 						serverSocket = new ServerSocket(PORT);
-						connectThread = new MasterConnectThread(serverSocket, labelIP, labelHost, jframe);
+//						connectThread = new MasterConnectThread(serverSocket, labelIP, labelHost, jframe);
+						connectThread = new MasterConnectThread(serverSocket,myJFrame);
 						connectThread.start();
-						
-						
 						
 					}else {
 						// 현재 스레드의 상태가 종료되어있지 않다면 종료
@@ -142,10 +146,6 @@ public class MasterJFrame extends JFrame {
 						if(isOpen(serverSocket)) {
 							serverSocket.close();
 						}
-						
-						labelIP.setText("000.000.000.000");
-						labelHost.setText("미접속");
-						labelResult.setText("연결확인");
 						btnStart.setText("ON");
 					}
 
@@ -191,13 +191,13 @@ public class MasterJFrame extends JFrame {
 					connectThread.interrupt();
 					System.out.println("connectThread 인터럽트");
 					
-					connectThread =  new MasterConnectThread(serverSocket, labelIP, labelHost, jframe);
-					connectThread.start();
-					System.out.println("connectThread 다시실행");
-					
 					labelIP.setText("000.000.000.000");
-					labelHost.setText("미접속");
-					labelResult.setText("연결확인");
+					labelHost.setText("Unknown");
+					
+					connectThread =  new MasterConnectThread(serverSocket,myJFrame);
+					connectThread.start();
+
+					System.out.println("connectThread 다시실행");
 				}else {
 					System.out.println("현재 연결이 되어있지 않습니다.");
 				}
