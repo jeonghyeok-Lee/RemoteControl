@@ -24,7 +24,7 @@ import com.java.utility.EmailSend;
 
 // 회원가입을 위한 JFrame
 public class AccountSignUp extends JFrame {
-	private boolean checkProgram = false; 								// 마스터인지 슬레이브인지 구분을 위한
+	private boolean checkProgram = false; 								// 마스터인지 슬레이브인지 구분을 위한 마스터 - false / 슬레이브 - true
 	private int number = 0; 											// 인증번호를 담는 변수
 	private DefaultJFrame jframe = null;
 	private int count = 0; 												// 인증요청을 시도했는지 체크하기 위한 변수
