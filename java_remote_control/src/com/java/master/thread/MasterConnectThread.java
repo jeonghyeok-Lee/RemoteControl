@@ -72,24 +72,30 @@ public class MasterConnectThread extends Thread {
 				labelHost.setText(hostName);
 
 				// 슬레이브에게 보낼 값 정의
-				str = myNet.getHostAddress().toString() + "-" + myNet.getHostName().toString();
+				str = myNet.getHostAddress().toString() + "-" 
+						+ myNet.getHostName().toString() + "-"
+						+ screen.getWidth() + "-" 
+						+ screen.getHeight();
+				
 				System.out.println(str);
 				objectOutStream.writeUTF(str); // 문자열의 형태로 값 전달
 				objectOutStream.flush();
 
 				while (true) {
-					System.out.println(socket.isConnected() + " " + socket.isClosed() + " " + !(socket.isConnected() && ! socket.isClosed()));
-					if( !(socket.isConnected() && ! socket.isClosed())) {
-						break;
-					}
-					
 					mouse = MouseInfo.getPointerInfo().getLocation();
-
-					if (mouse.x == 0 && !chkPlace) {
+					
+					// 현재 마우스의 위치가 0이면서 chkPlace가 false일때 == 활동영역 생성
+					// => chkPlace - false ==> 현재 활동영역이 생성되지 않음
+					if (mouse.x == 0 && !chkPlace) {	
 						new Robot().mouseMove((int) screen.getWidth(), mouse.y);
 						placeJframe = new MasterExecutionJFrame();
 						chkPlace = true;
 					} 
+					
+					if(placeJframe != null &&placeJframe.isFrameState()) {
+						placeJframe = null;
+						chkPlace = false;
+					}
 					
 					// 객체로 값 전달
 					// placeJframe에서 리스너의 값이 true라면 해당 값을 전달
@@ -115,29 +121,12 @@ public class MasterConnectThread extends Thread {
 						objectOutStream.flush();
 					}
 					
-//					if (placeJframe != null && placeJframe.isKeyListen()) {
-//						objectOutStream.writeObject(placeJframe.getKey());
-//						objectOutStream.flush();
-//						placeJframe.setKeyListen(false);
-//					} else if (placeJframe != null && placeJframe.isMouseWheelListen()) {
-//						objectOutStream.writeObject(placeJframe.getMouseWheel());
-//						objectOutStream.flush();
-//						placeJframe.setMouseWheelListen(false);
-//					} else if (placeJframe != null && placeJframe.isMouseListen()) {
-//						objectOutStream.writeObject(placeJframe.getMouse());
-//						objectOutStream.flush();
-//						placeJframe.setMouseListen(false);
-//					}else {
-//						objectOutStream.writeObject(mouse);
-//						objectOutStream.flush();
-//					}
-					sleep(100);
+					sleep(10); // 만약 마우스가 잘 안먹는다 싶으면 해당 부분을 더 낮추기
 				}
 			}
 		} catch (SocketException e) {
 			e.printStackTrace();
-//			objectOutStream = null;
-//			socket = null;
+			if(placeJframe != null) placeJframe.dispose();
 		} catch (IOException e) {
 			System.out.println("IOException 발생\n"+e.getMessage());
 			labelInit();
@@ -147,6 +136,7 @@ public class MasterConnectThread extends Thread {
 			try {
 				if (objectOutStream != null) objectOutStream.close();
 				if (socket != null) socket.close();
+				if	(placeJframe != null) placeJframe.dispose();
 				labelInit();
 				System.out.println("소켓 닫기");
 			} catch (Exception e) {
