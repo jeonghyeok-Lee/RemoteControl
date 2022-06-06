@@ -12,6 +12,7 @@ public class RegularExpression {
 		return regex;
 	}
 
+	// 체크할 문자열 - str / 체크할 문자열의 파트부분 - part[id / pw / email]
 	public RegularExpression(String str, String part) {
 		if(part == "id")
 			pattern = "^[\\w]*{8,20}$";
