@@ -39,8 +39,8 @@ public class MasterJFrame extends JFrame {
 			, labelMyPort = null;
 	
 	private JButton btnStart = null;
-	private UserDAO dao = null;
-	private ArrayList<UserDTO> dto = null;
+	private UserDAO userDAO = null;
+	private ArrayList<UserDTO> userDTO = null;
 	private String id = null, pw = null;
 	private int userNo = 0; 						//유저번호
 	private Timer timer = null; 					// 연결시간을 출력하기 위한 타이머
@@ -62,15 +62,20 @@ public class MasterJFrame extends JFrame {
 	}
 
 
-	// 지금은 간단하게 화면을 테스트하기위해서 남겨둠
-	public MasterJFrame() {
+	public MasterJFrame(ArrayList<UserDTO> userDTO,UserDAO userDAO) {
+		this.userDTO = userDTO;
+		this.userDAO = userDAO;
 		setUI1();
+		myJFrame = this;
 	}
 	
-	
+	//테스트용
 	public MasterJFrame(String id, String pw) {
 		this.id = id;
 		this.pw = pw;
+		
+		userDAO= new UserDAO();
+		userDTO = userDAO.userSelect( "where user_id = '" + id +"' and user_password = '"+pw+"'");
 		
 		setUI1();
 		// 생성되면 해당 생성된 프레임을 myJFrame에
@@ -81,9 +86,7 @@ public class MasterJFrame extends JFrame {
 		jframe = new DefaultJFrame("마스터 프로그램", 700, 400);
 		jframe.setPanel();
 		
-		dao = new UserDAO();
-		dto = dao.userSelect("where user_id = '" + id +"'" );
-		userNo = dto.get(0).getUserNo();
+		userNo = userDTO.get(0).getUserNo();
 		
 		east = jframe.getEastPanel();
 		west = jframe.getWestPanel();
@@ -244,7 +247,7 @@ public class MasterJFrame extends JFrame {
 		
 		// 비밀번호 변경부분의 영역을 생성
 		JPanel pwPart = new JPanel();
-		JLabel password = new JLabel(dto.get(0).getUserPassword());
+		JLabel password = new JLabel(userDTO.get(0).getUserPassword());
 		pwPart.add(password);
 		pwPart.add(btnChangePassword);
 		
@@ -264,11 +267,11 @@ public class MasterJFrame extends JFrame {
 		logoutPart.add(btnLogout);
 		
 		JComponent[] component = new JComponent[] {
-				new JLabel("User"), new JLabel(dto.get(0).getUserId())
+				new JLabel("User"), new JLabel(userDTO.get(0).getUserId())
 				,new JLabel("Password"), pwPart
-				,new JLabel("Name"), new JLabel(dto.get(0).getUserName())
-				,new JLabel("Email"), new JLabel(dto.get(0).getUserEmail())
-				,new JLabel("User"), new JLabel(dto.get(0).getUserId())
+				,new JLabel("Name"), new JLabel(userDTO.get(0).getUserName())
+				,new JLabel("Email"), new JLabel(userDTO.get(0).getUserEmail())
+				,new JLabel(), new JLabel()
 		};
 		
 		// 각 패널의 컴포넌트 추가
@@ -439,9 +442,9 @@ public class MasterJFrame extends JFrame {
 				String msgText = "";
 				RegularExpression regex = new RegularExpression(txtPW.getText(),"pw");
 				// 현재 입력 비밀번호가 맞다면
-				if(dto.get(0).getUserPassword().equals(txtPW.getText())) {
+				if(userDTO.get(0).getUserPassword().equals(txtPW.getText())) {
 					String query = "update user set user_password = '" +txtNewPW.getText()+"' where user_no = "+userNo;
-					int result = dao.userUpdate(query);
+					int result = userDAO.userUpdate(query);
 
 					if(result != 0) {	// 변경이 성공적으로 이루어졌다면
 						msgText = "변경에 성공하였습니다.";
@@ -462,7 +465,7 @@ public class MasterJFrame extends JFrame {
 					}
 				}else {
 					// 입력 비밀번호가 아니었던 것 이라면
-					if(!dto.get(0).getUserPassword().equals(txtPW.getText())) {
+					if(!userDTO.get(0).getUserPassword().equals(txtPW.getText())) {
 						msgText = "입력하신 비밀번호는 현재 비밀번호가 아닙니다.";
 					}else if(!txtNewPW.equals(txtCheckPW)) {
 						msgText = "새로 입력하신 비밀번호가 일치하지 않습니다.";

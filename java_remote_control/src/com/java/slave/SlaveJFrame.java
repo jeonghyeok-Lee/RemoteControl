@@ -5,6 +5,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.Socket;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -14,6 +15,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import com.java.db.dao.UserDAO;
+import com.java.db.dto.UserDTO;
 import com.java.jframe.DefaultJFrame;
 import com.java.slave.thread.SlaveReadingThread;
 import com.java.slave.thread.SlaveWritingThread;
@@ -34,6 +37,9 @@ public class SlaveJFrame extends JFrame {
 	private SlaveJFrame myJFrame = null;
 	private CardLayout card = null;
 	private JPanel centerContent = null;
+	
+	private ArrayList<UserDTO> userDTO = null;	// 회원정보가 담긴 ArrayList
+	private UserDAO userDAO = null;
 
 	// 스레드에서 사용하기 위한 생성자
 	public boolean isDisconnect() {
@@ -59,16 +65,24 @@ public class SlaveJFrame extends JFrame {
 		return labelHost;
 	}
 	
+	// 비회원을 위한 생성자
 	public SlaveJFrame() {
+		nonLogIn = true;
 		setUI();
 		myJFrame = this;
+		System.out.println("비회원으로 접속");
 	}
 	
-	public SlaveJFrame(boolean nonLogIn) {
-		this.nonLogIn = nonLogIn;
+	// 회원을 위한 생성자
+	public SlaveJFrame(ArrayList<UserDTO> userDTO, UserDAO userDAO) {
+		this.userDTO = userDTO;
+		this.userDAO = userDAO;
 		setUI();
+		myJFrame = this;
+		System.out.println("회원으로 접속");
 	}
 	
+
 	private void setUI() {
 		jframe = new DefaultJFrame("슬레이브 프로그램", 450, 300);
 		jframe.setPanel();
