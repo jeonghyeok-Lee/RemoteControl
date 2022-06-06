@@ -26,7 +26,7 @@ public class UsageRecordDAO {
 	}
 	
 	public ArrayList<UsageRecordDTO> userSelect(String where){
-		query = "select * from user " + where;
+		query = "select * from usage_record " + where;
 		ArrayList<UsageRecordDTO> userDTO = new ArrayList<UsageRecordDTO>();
 		try {
 			conn = DriverManager.getConnection(dbInfo.getUrl(), dbInfo.getUid(), dbInfo.getPw());
