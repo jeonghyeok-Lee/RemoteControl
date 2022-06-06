@@ -2,40 +2,41 @@ package com.java.slave.thread;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.InetAddress;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.net.UnknownHostException;
+import java.net.SocketException;
 
-import javax.swing.JLabel;
+import com.java.slave.SlaveJFrame;
 
 // 서버에 값을 전달하는 스레드
 public class SlaveWritingThread extends Thread {
 	private Socket socket = null;
 	private DataOutputStream dataOutStream = null;
+	private boolean checkConnect = false;
+	private SlaveJFrame myJFrame = null;
 	
-	public SlaveWritingThread(Socket socket) {
+	public SlaveWritingThread(Socket socket, SlaveJFrame myJFrame) {
 		this.socket = socket;
+		this.myJFrame = myJFrame;
 	}
 	
 	public void run() {
 		try {
-			// 슬레이브에서 마스터에게 값을 전달하기 위한 OutputStream
-			InetAddress myNet = InetAddress.getLocalHost();
-			String hostName =  myNet.getHostName().toString();
 			dataOutStream = new DataOutputStream(socket.getOutputStream());
 			
-			// 값을 계속해서 전달하기 위한 반복문
+			// 종료 신호 전달
+			System.out.println("종료신호 전달");		
 			while(true) {
-				dataOutStream.writeUTF(hostName); // 문자열의 형태로 값 전달
+				if(myJFrame.isDisconnect()) {
+					checkConnect = true;
+				}
+				dataOutStream.writeBoolean(checkConnect);
 				dataOutStream.flush();
 			}
+
 			
-			
-		}catch (UnknownHostException e) {
-			System.out.println("IP가 잘못됨\n"+e.getMessage());
-		}catch (IOException e) {
-			System.out.println("IOException 발생-Write\n"+e.getMessage());
-			
+		} catch (IOException e) {
+			System.out.println("IOException 발생-Read\n"+e.getMessage());
 		} catch(Exception e) {
 			e.printStackTrace();
 		} finally {

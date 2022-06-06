@@ -1,5 +1,6 @@
 package com.java.slave.thread;
 
+import java.awt.CardLayout;
 import java.awt.Point;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
@@ -11,36 +12,58 @@ import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import com.java.slave.SlaveJFrame;
 
 // 서버에서 오는 값을 수행하는 스레드
 public class SlaveReadingThread extends Thread {
 	private Socket socket = null;
-	JLabel labelIP = null, labelHost = null;
-	boolean firstConnect = false;
-	boolean checkStart =  false; // 마스터의 활동영역이 연결되었을 경우 true
+	private JLabel labelIP = null, labelHost = null;
+	private JPanel content = null;
+	private CardLayout card = null;
+	private JButton button = null;
+	private boolean firstConnect = false;
+	private boolean checkStart =  false; // 마스터의 활동영역이 연결되었을 경우 true
 	
+	private SlaveJFrame jframe = null;
+	
+	// 생성자 (연결소켓, 출력될 ip/host레이블, 연결에따른 화면전환을 위한 card와 content)
 	public SlaveReadingThread(Socket socket,JLabel labelIP,JLabel labelHost) {
 		this.socket = socket;
 		this.labelIP = labelIP;
 		this.labelHost = labelHost;
+
 	}
 	
+	public SlaveReadingThread(Socket socket,SlaveJFrame jframe) {
+		this.socket = socket;
+		this.jframe = jframe;
+		labelIP = jframe.getLabelIP();
+		labelHost = jframe.getLabelHost();		
+		card = jframe.getCard();
+		content = jframe.getCenterContent();
+		button = jframe.getButton();
+		button.setText("연결해제");
+	}
+	
+	
 	public void run() {
-		DataInputStream dataInStream = null;
 		ObjectInputStream objectInStream = null;
 		Robot robot = null;	
 		
-		try {
+		try {	
 			// 서버에서 값을 받아오기 위한 InputStream
-			dataInStream = new DataInputStream(socket.getInputStream());
 			objectInStream = new ObjectInputStream(socket.getInputStream());
 			robot = new Robot();
+			System.out.println("1차");
 			// 값을 계속해서 수행하기 위한 반복문
-			System.out.println("while문 입구");
 			while(true) {
-				if(!firstConnect) {
-					String str = dataInStream.readUTF();
+				if(!firstConnect) {	// 처음 접속하는 것을 경우
+					System.out.println("진입");
+					String str = objectInStream.readUTF();
 					System.out.println(str);
 					
 					String[] strSplit = str.split("-");
@@ -50,7 +73,7 @@ public class SlaveReadingThread extends Thread {
 					System.out.println("서버 연결 성공");
 					firstConnect = true;
 				}
-				else {
+				else {		// 값을 받아 수행
 					Object value = objectInStream.readObject();
 					System.out.println(value.getClass().getSimpleName());
 					if(value instanceof Point) {
@@ -82,10 +105,11 @@ public class SlaveReadingThread extends Thread {
 		} finally {
 			try {
 				if(objectInStream != null) objectInStream.close();
-				if(dataInStream != null) dataInStream.close();
 				if(socket != null) socket.close();
-				labelIP.setText("Connect Server IP");
-				labelHost.setText("Connect Server Port");
+				labelIP.setText("000.000.000.000");
+				labelHost.setText("0000");
+				card.show(content, "disconnect");
+				button.setText("연결");
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
