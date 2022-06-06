@@ -28,26 +28,26 @@ public class LogInJFrame extends JFrame {
 	
 	private DefaultJFrame jframe = null;
 	
-	// checkProgram - 관리자인지 아닌지 유무 파악용
+	// checkProgram - 슬레이브인지 아닌지 유무 파악용 true-슬레이브 false - 마스터
 	public LogInJFrame(boolean checkProgram) {
 		this.checkProgram = checkProgram;
-		setUI(checkProgram);
+		setUI();
 	}
 	
-	private void setUI(boolean checkProgram) {
+	private void setUI() {
 		jframe = new DefaultJFrame("로그인 폼",450,220);
 		jframe.setPanel();
 		
 		dao = new UserDAO();
 		JPanel center = jframe.getCenterPanel();
 		
-		center.add(setCenter(checkProgram));
+		center.add(setCenter());
 		
 		jframe.addContain();
 		
 	}
 	
-	private JPanel setCenter(boolean checkProgram) {
+	private JPanel setCenter() {
 		JPanel centerContent = new JPanel(new GridLayout(0,2,10,10));
 		JPanel btnContentLeft = new JPanel(new GridLayout(0,2));
 		JPanel btnContentRight = new JPanel(new GridLayout(0,2,10,10));
@@ -58,19 +58,58 @@ public class LogInJFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				if(!isStringEmpty(txtID.getText().toString()) && !isStringEmpty(txtPW.getText().toString())) {
-					dto = dao.userSelect("where user_id = '" + txtID.getText() +"' and user_password = '"+txtPW.getText()+"'"  );
+				if(!isStringEmpty(txtID.getText().toString()) && !isStringEmpty(txtPW.getText().toString())) {	// 입력란이 비어있지않다면
+					String where = "";
+					if(checkProgram) {	
+						where = "where user_id = '" + txtID.getText() +"' and user_password = '"+txtPW.getText()+"' and user_rank = '슬레이브'";
+					}else {
+						where = "where user_id = '" + txtID.getText() +"' and user_password = '"+txtPW.getText()+"' and user_rank = '마스터'";
+					}
+					
+					try {
+						dto = dao.userSelect(where);
+						if(dto.isEmpty()) {
+							String msgText = "아이디 혹은 비밀번호를 잘못입력하셨습니다.";
+							JLabel[] msg = new JLabel[] {new JLabel(msgText) };
+							JButton btnOk = new JButton("확인");
+							DefaultJFrame error = new DefaultJFrame("경고", 300, 120, msg, btnOk, false);
+							btnOk.addActionListener(new ActionListener() {
+								@Override
+								public void actionPerformed(ActionEvent e) {
+									error.dispose(); // 현재 창닫기
+								}
+							});
+							error.addContaionEmpty();
+						}
+					}catch(Exception e1) {	// 메시지는 로그로 남을 것임 -> dao를 통해 검색하는 값[list]가 비어있기 때문 해당 처리를 위에서 해주었기 때문에 나와도 상관없음
+						e1.getStackTrace(); 
+					}finally {						
+						txtID.setText("");
+						txtPW.setText("");
+					}
 					System.out.println("ID : " + dto.get(0).getUserId() + " PW : " + dto.get(0).getUserPassword());
-					if(checkProgram) {	// 슬레이브쪽에서 로그인 시도 시 
-						new SlaveJFrame();						
-					}else {				// 마스터쪽에서 로그인 시도 시
-//						new MasterJFrame();
-						new MasterJFrame(txtID.getText(),txtPW.getText());
+					
+					if(checkProgram) {				// 슬레이브쪽에서 로그인 시도 시 
+						new SlaveJFrame(dto, dao);		// 회원으로 로그인					
+					}else {							// 마스터쪽에서 로그인 시도 시
+						new MasterJFrame(dto,dao);
 					}
 					jframe.dispose();
 						
 				}else {
-					System.out.println("ID/PW를 정확하게 입력하여주세요");
+					String msgText = "아이디 혹은 비밀번호를 모두 입력해주세요.";
+					JLabel[] msg = new JLabel[] {new JLabel(msgText) };
+					JButton btnOk = new JButton("확인");
+					DefaultJFrame error = new DefaultJFrame("경고", 300, 120, msg, btnOk, false);
+					btnOk.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							error.dispose(); // 현재 창닫기
+						}
+					});
+					error.addContaionEmpty();
+					txtID.setText("");
+					txtPW.setText("");
 				}	
 			}
 		});
@@ -102,7 +141,7 @@ public class LogInJFrame extends JFrame {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					new SlaveJFrame();
+					new SlaveJFrame();	// 비회원으로 로그임
 					dispose();
 				}
 			});
