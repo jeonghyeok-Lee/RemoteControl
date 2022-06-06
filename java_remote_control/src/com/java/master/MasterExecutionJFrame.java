@@ -10,6 +10,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 
@@ -21,17 +22,19 @@ public class MasterExecutionJFrame extends JFrame {
 	private Screen screen = null;
 	private DefaultJFrame jframe = null;
 	
-	private boolean keyListen = false;
-	private boolean mouseListen = false;
-	private boolean mouseWheelListen = false;
+	private boolean keyListen = false;			// 키 이벤트 발생시 true
+	private boolean mouseListen = false;		// 마우스 이벤트 발생시 true
+	private boolean mouseWheelListen = false;	// 마우스 휠 이벤트 발생시 true
+	private boolean frameState = false;			// 현재 프레임이 살아있을경우 false
 
-	private KeyEvent key = null;
-
-	private MouseEvent mouse = null;
+	private KeyEvent key = null;				// 키 이벤트 발생시의 키 이벤트
+	private MouseEvent mouse = null;			// 마우스 이벤트 발생시의 마우스 이벤트
+	private MouseWheelEvent mouseWheel = null;	// 마우스 휠 이벤트 발생시의 마우스 휠 이벤트
 	
-	private MouseWheelEvent mouseWheel = null;
 	
-
+	public boolean isFrameState() {
+		return frameState;
+	}
 	public KeyEvent getKey() {
 		return key;
 	}
@@ -73,6 +76,7 @@ public class MasterExecutionJFrame extends JFrame {
 
 	public MasterExecutionJFrame() {
 		setUI();
+		this.requestFocus();
 	}
 	
 	
@@ -170,14 +174,11 @@ public class MasterExecutionJFrame extends JFrame {
 			@Override
 			public void mouseMoved(MouseEvent e) {
 				try {
-					System.out.println(e.getX());
-					if(e.getX() == (int)new Screen().getWidth()-1) {
-						new Robot().mouseMove(0, e.getY());
-//						jframeDispose = true;
-						//지금 만들어야하는것은 해당 마우스값이 가장 우측으로 갈 경우 
-						// 해당 jframe을 종료하고 마우스 값이동을 대기
-						
-						
+					if(e.getX() == (int)new Screen().getWidth()-10) {
+						new Robot().mouseMove(1, e.getY());
+						jframe.requestFocus();
+						frameState = true;
+						jframe.dispose();	// 현재 자신 종료
 					}
 				} catch (AWTException e1) {
 					// TODO Auto-generated catch block
@@ -194,8 +195,7 @@ public class MasterExecutionJFrame extends JFrame {
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent e) {
 				mouseWheel = e;
-				mouseWheelListen = true;
-				
+				mouseWheelListen = true;	
 			}
 			
 		});
