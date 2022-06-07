@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.ServerSocket;
 import java.util.ArrayList;
+import java.util.Timer;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -16,7 +17,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.swing.Timer;
 
 import com.java.db.dao.UserDAO;
 import com.java.db.dto.UserDTO;
@@ -25,6 +25,7 @@ import com.java.jframe.LogInJFrame;
 import com.java.master.thread.MasterConnectThread;
 import com.java.utility.IpAddress;
 import com.java.utility.RegularExpression;
+import com.java.utility.TimerClass;
 
 public class MasterJFrame extends JFrame {
 	// 연결된 슬레이브에 대한 정보를 담는 JLabel
@@ -43,7 +44,6 @@ public class MasterJFrame extends JFrame {
 	private ArrayList<UserDTO> userDTO = null;
 	private String id = null, pw = null;
 	private int userNo = 0; 						//유저번호
-	private Timer timer = null; 					// 연결시간을 출력하기 위한 타이머
 	private ServerSocket serverSocket = null;		// 서버소켓
 	private MasterConnectThread connectThread =  null;
 	private final static int PORT = 9095;			// 포트
@@ -52,7 +52,13 @@ public class MasterJFrame extends JFrame {
 	private CardLayout card = null;					// 동쪽 배치관리자
 	private JPanel eastContent = null;				// 동쪽 내용
 	private MasterJFrame myJFrame = null;			// 자기자신
+	private JLabel labelTimer = null; 				// 연결시간을 표시할 레이블
+
 	
+	public JLabel getLabelTimer() {
+		return labelTimer;
+	}
+
 	public JLabel getLabelIP() {
 		return labelIP;
 	}
@@ -142,6 +148,7 @@ public class MasterJFrame extends JFrame {
 						connectThread = new MasterConnectThread(serverSocket,myJFrame);
 						connectThread.start();
 						
+						
 					}else {
 						// 현재 스레드의 상태가 종료되어있지 않다면 종료
 						if(connectThread.getState() != Thread.State.TERMINATED) connectThread.interrupt();
@@ -208,14 +215,13 @@ public class MasterJFrame extends JFrame {
 			}
 
 		});
-		
 
 		eastContent.add(new JLabel("Host "));
 		eastContent.add(labelHost = new JLabel("미접속"));	
 		eastContent.add(new JLabel("IP  "));
 		eastContent.add(labelIP = new JLabel("000.000.000.000"));
 		eastContent.add(new JLabel("Access"));
-		eastContent.add(new JLabel("00/00/00/00:00 00분"));
+		eastContent.add(labelTimer = new JLabel("00:00:00"));
 		eastContent.add(btnDisConnect);
 
 		group.add(eastContent);
@@ -263,6 +269,7 @@ public class MasterJFrame extends JFrame {
 			}
 			
 		});
+		
 		JPanel logoutPart = new JPanel();
 		logoutPart.add(btnLogout);
 		
@@ -506,6 +513,5 @@ public class MasterJFrame extends JFrame {
 		
 		pwChangeJFrame.addContain();
 	}
-	
 	
 }
