@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
@@ -29,12 +31,12 @@ public class AccountSignUp extends JFrame {
 	private DefaultJFrame jframe = null;
 	private int count = 0; 												// 인증요청을 시도했는지 체크하기 위한 변수
 	private boolean chkID = false, chkPw = false, chkEmail = false;  
-
 	UserDAO dao = null;
 	ArrayList<UserDTO> dto = null;
 
 	public AccountSignUp(boolean checkProgram) {
 		this.checkProgram = checkProgram;
+
 		setUI();
 	}
 
@@ -67,12 +69,6 @@ public class AccountSignUp extends JFrame {
 		JTextField txtName = new JTextField(15);
 		JTextField txtEmail = new JTextField(15);
 		JTextField txtEmailCheck = new JTextField(15);
-		
-		JComboBox<String> cmbEmail = new JComboBox<String>();
-
-		cmbEmail.addItem("@gmail.com");
-		cmbEmail.addItem("@naver.com");
-		cmbEmail.addItem("@kyungmin.ac.kr");
 
 		JButton btnCheckID = new JButton("중복 확인");
 		btnCheckID.addActionListener(new ActionListener() {
@@ -261,11 +257,19 @@ public class AccountSignUp extends JFrame {
 					else {
 						query += "','슬레이브')";
 					}
+					
 					result = dao.userUpdate(query);
-					if(result != 0) {
+					
+					if(result != 0) { // 수정이 완료되었을 경우
 						msgText = "가입에 성공하였습니다.";
 					}else {
 						msgText = "가입에 실패하였습니다.";
+						txtID.setText("");
+						txtPW.setText("");
+						txtPWCheck.setText("");
+						txtName.setText("");
+						txtEmail.setText("");
+						txtEmailCheck.setText("");
 					}
 					JLabel[] msg = new JLabel[] {new JLabel(msgText) };
 					JButton btnOk = new JButton("확인");
@@ -277,6 +281,7 @@ public class AccountSignUp extends JFrame {
 						}
 					});
 					error.addContaionEmpty();
+					
 				}
 			}
 		});
