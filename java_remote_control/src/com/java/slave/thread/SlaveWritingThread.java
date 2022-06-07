@@ -11,41 +11,58 @@ import com.java.slave.SlaveJFrame;
 // 서버에 값을 전달하는 스레드
 public class SlaveWritingThread extends Thread {
 	private Socket socket = null;
-	private DataOutputStream dataOutStream = null;
-	private boolean checkConnect = false;
+	private ObjectOutputStream objectOutStream = null;
 	private SlaveJFrame myJFrame = null;
+	private int userNo = 0;
+	private String userIp = "";
+	private boolean nonLogin = false;
+	private boolean end = false;		// 종료여부
 	
-	public SlaveWritingThread(Socket socket, SlaveJFrame myJFrame) {
+	public void setEnd(boolean end) {
+		this.end = end;
+	}
+
+	public SlaveWritingThread(Socket socket, int userNo) {
 		this.socket = socket;
-		this.myJFrame = myJFrame;
+		this.userNo = userNo;
+	}
+	
+	public SlaveWritingThread(Socket socket, String userIp) {
+		this.socket = socket;
+		this.userIp = userIp;
+		nonLogin = true;
 	}
 	
 	public void run() {
 		try {
-			dataOutStream = new DataOutputStream(socket.getOutputStream());
-			
-			// 종료 신호 전달
-			System.out.println("종료신호 전달");		
+			System.out.println("writing start");
+			objectOutStream = new ObjectOutputStream(socket.getOutputStream());
+			String str ="";// 전송할 값
 			while(true) {
-				if(myJFrame.isDisconnect()) {
-					checkConnect = true;
+				if(!end) {
+					if(!nonLogin) { // 회원이고 종료가 되지 않았다면
+						str = userNo + "";
+					}else {
+						str = userIp;
+					}
+					objectOutStream.writeObject(str);
+					objectOutStream.flush();
+				}else {
+					str = "end";
+					objectOutStream.writeObject(str);
+					objectOutStream.flush();
+					break;
 				}
-				dataOutStream.writeBoolean(checkConnect);
-				dataOutStream.flush();
+				sleep(10);
 			}
 
+			System.out.println("writing end");
 			
 		} catch (IOException e) {
-			System.out.println("IOException 발생-Read\n"+e.getMessage());
+			System.out.println("IOException 발생-write\n"+e.getMessage());
 		} catch(Exception e) {
 			e.printStackTrace();
-		} finally {
-			try {
-				if(dataOutStream != null) dataOutStream.close();
-				if(socket != null) socket.close();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-		}
+		} 
 	}
+
 }
