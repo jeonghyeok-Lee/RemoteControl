@@ -36,7 +36,6 @@ public class AccountSignUp extends JFrame {
 
 	public AccountSignUp(boolean checkProgram) {
 		this.checkProgram = checkProgram;
-
 		setUI();
 	}
 
@@ -113,8 +112,8 @@ public class AccountSignUp extends JFrame {
 					}
 				});
 				error.addContaionEmpty();
+				
 			}
-
 		});
 
 		JButton btnCheckPW = new JButton("비밀번호 확인");
@@ -195,12 +194,25 @@ public class AccountSignUp extends JFrame {
 				// 인증요청버튼이 클릭되었을 때 실행되도록 설정해야함
 				if (count > 0) {
 					System.out.println(number);
+					String msgText = "";
 					if (txtEmailCheck.getText().equals(Integer.toString(number))) {
+						msgText = "인증번호가 동일합니다.";
 						System.out.println("인증번호가 동일합니다.");
 						chkEmail = true;
 					}else {
+						msgText = "인증번호가 다릅니다.";
 						System.out.println("인증번호가 다릅니다.");
 					}
+					JLabel[] msg = new JLabel[] { new JLabel(msgText)  };
+					JButton btnOk = new JButton("확인");
+					DefaultJFrame error = new DefaultJFrame("경고", 250, 150, msg, btnOk, false);
+					btnOk.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							error.frameDispose(); // 현재 창닫기
+						}
+					});
+					error.addContaionEmpty();
 				} else {
 					// 경고 메시지 출력을 우한 frame 생성
 					JLabel[] msg = new JLabel[] { 
@@ -221,7 +233,6 @@ public class AccountSignUp extends JFrame {
 					});
 					error.addContaionEmpty();
 				}
-				
 			}
 			
 		});
@@ -281,7 +292,7 @@ public class AccountSignUp extends JFrame {
 						}
 					});
 					error.addContaionEmpty();
-					
+					jframe.dispose();
 				}
 			}
 		});

@@ -65,6 +65,5 @@ public class UserDTO {
 	public void setUserRank(String userRank) {
 		this.userRank = userRank;
 	}
-	
 
 }

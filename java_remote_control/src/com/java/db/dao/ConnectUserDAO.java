@@ -35,10 +35,10 @@ public class ConnectUserDAO {
 			rs = stmt.executeQuery(query);
 			
 			while(rs.next()) {
-				int connectNo = rs.getInt("conncet_no");
-				int connectMaster= rs.getInt("conncet_master");
-				int connectSlave= rs.getInt("conncet_slave");
-				String connectDate = rs.getString("conncet_date");
+				int connectNo = rs.getInt("connect_no");
+				int connectMaster= rs.getInt("connect_master");
+				int connectSlave= rs.getInt("connect_slave");
+				String connectDate = rs.getString("connect_date");
 				
 				ConnectUserDTO dto = new ConnectUserDTO(connectNo,connectMaster,connectSlave,connectDate);
 				userDTO.add(dto);
@@ -80,4 +80,28 @@ public class ConnectUserDAO {
 		}
 		return result;
 	}
+	
+	// query에 따른 row 개수 파악
+	public int getConnectRow(String where) {
+		query = "select * from connect_user " + where;
+		int result = 0;
+		try {
+			conn = DriverManager.getConnection(dbInfo.getUrl(), dbInfo.getUid(), dbInfo.getPw());
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(query);
+			result = rs.getRow();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				if(rs != null) rs.close();
+				if(stmt != null) stmt.close();
+				if(conn != null) conn.close();
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+
 }

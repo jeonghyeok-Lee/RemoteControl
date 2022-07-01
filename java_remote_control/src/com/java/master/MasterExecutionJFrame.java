@@ -26,11 +26,19 @@ public class MasterExecutionJFrame extends JFrame {
 	private boolean mouseListen = false;		// 마우스 이벤트 발생시 true
 	private boolean mouseWheelListen = false;	// 마우스 휠 이벤트 발생시 true
 	private boolean frameState = false;			// 현재 프레임이 살아있을경우 false
-
+	private boolean slaveEnd = false; 			// 슬레이브가 종료 되었을 경우 true;
+	
 	private KeyEvent key = null;				// 키 이벤트 발생시의 키 이벤트
 	private MouseEvent mouse = null;			// 마우스 이벤트 발생시의 마우스 이벤트
 	private MouseWheelEvent mouseWheel = null;	// 마우스 휠 이벤트 발생시의 마우스 휠 이벤트
 	
+	
+	public boolean isSlaveEnd() {
+		return slaveEnd;
+	}
+	public void setSlaveEnd(boolean slaveEnd) {
+		this.slaveEnd = slaveEnd;
+	}
 	
 	public boolean isFrameState() {
 		return frameState;
@@ -100,7 +108,7 @@ public class MasterExecutionJFrame extends JFrame {
 //				 System.out.println(e.getKeyChar()+" keyTyped key");
 	             
 	             //shift가 같이 눌렸는지 확인하는 방법
-	             if((e.getModifiers() & 1) != 0){ // 1은 shift, 2는 Ctrl키 입니다.
+	             if((e.getModifiers() & 1) != 0){ // 1은 shift, 2는 Ctrl키 8은 alt
 	                 //이를 & 연산을하여 같으면 0이아닌 숫자를 반환함으로  해당 키가 눌림을 확인 할 수 있습니다.
 	                 System.out.printf("shift를 눌렀습니다.\n");
 	                 
@@ -114,6 +122,7 @@ public class MasterExecutionJFrame extends JFrame {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				key = e;
+				System.out.println(key.getKeyChar() + " keycode : " + key.getKeyCode());
 				keyListen = true;
 	        }
 
@@ -174,6 +183,9 @@ public class MasterExecutionJFrame extends JFrame {
 			@Override
 			public void mouseMoved(MouseEvent e) {
 				try {
+					if(slaveEnd) {
+						jframe.dispose();
+					}
 					if(e.getX() == (int)new Screen().getWidth()-10) {
 						new Robot().mouseMove(1, e.getY());
 						jframe.requestFocus();

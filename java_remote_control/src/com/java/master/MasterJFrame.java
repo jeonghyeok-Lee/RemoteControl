@@ -2,12 +2,12 @@ package com.java.master;
 
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.ServerSocket;
 import java.util.ArrayList;
-import java.util.Timer;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -16,6 +16,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import com.java.db.dao.UserDAO;
@@ -25,7 +26,6 @@ import com.java.jframe.LogInJFrame;
 import com.java.master.thread.MasterConnectThread;
 import com.java.utility.IpAddress;
 import com.java.utility.RegularExpression;
-import com.java.utility.TimerClass;
 
 public class MasterJFrame extends JFrame {
 	// 연결된 슬레이브에 대한 정보를 담는 JLabel
@@ -41,7 +41,7 @@ public class MasterJFrame extends JFrame {
 	
 	private JButton btnStart = null;
 	private UserDAO userDAO = null;
-	private ArrayList<UserDTO> userDTO = null;
+	private ArrayList<UserDTO> userDTO = null;		// 마스터정보가 담긴 user테이블에대한 dao/dto
 	private String id = null, pw = null;
 	private int userNo = 0; 						//유저번호
 	private ServerSocket serverSocket = null;		// 서버소켓
@@ -53,8 +53,13 @@ public class MasterJFrame extends JFrame {
 	private JPanel eastContent = null;				// 동쪽 내용
 	private MasterJFrame myJFrame = null;			// 자기자신
 	private JLabel labelTimer = null; 				// 연결시간을 표시할 레이블
+	private JPanel recordContent = new JPanel();			// 사용기록을 출력할 패널 
 
 	
+	public JPanel getRecordContent() {
+		return recordContent;
+	}
+
 	public JLabel getLabelTimer() {
 		return labelTimer;
 	}
@@ -89,12 +94,13 @@ public class MasterJFrame extends JFrame {
 	}
 
 	private void setUI1() {
-		jframe = new DefaultJFrame("마스터 프로그램", 700, 400);
+		jframe = new DefaultJFrame("마스터 프로그램", 600, 500);
 		jframe.setPanel();
+		
 		
 		userNo = userDTO.get(0).getUserNo();
 		
-		east = jframe.getEastPanel();
+		east = jframe.getCenterPanel();
 		west = jframe.getWestPanel();
 		
 		east.add(setEast());
@@ -113,7 +119,7 @@ public class MasterJFrame extends JFrame {
 		eastContent.add(setEastController(), "controller");
 		eastContent.add(setEastNetwork() , "network");
 		eastContent.add(setEastAccount(),"account");
-		eastContent.add(setEastOption(),"option");
+//		eastContent.add(setEastOption(),"option");
 		
 		eastContent.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		card.show(eastContent, "controller");
@@ -132,7 +138,7 @@ public class MasterJFrame extends JFrame {
 
 		eastContent.setLayout(new GridLayout(0, 2));
 		// 여백주기 시계 반대 방향
-		eastContent.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
+		eastContent.setBorder(BorderFactory.createEmptyBorder(110, 30, 30, 30));
 
 		btnStart = new JButton("ON");
 		btnStart.addActionListener(new ActionListener() {
@@ -145,7 +151,7 @@ public class MasterJFrame extends JFrame {
 						btnStart.setText("OFF");
 						serverSocket = new ServerSocket(PORT);
 //						connectThread = new MasterConnectThread(serverSocket, labelIP, labelHost, jframe);
-						connectThread = new MasterConnectThread(serverSocket,myJFrame);
+						connectThread = new MasterConnectThread(serverSocket,myJFrame, userNo);
 						connectThread.start();
 						
 						
@@ -189,9 +195,9 @@ public class MasterJFrame extends JFrame {
 		// 실제 데이터 역할 수행
 		JPanel eastContent = new JPanel();
 
-		eastContent.setLayout(new GridLayout(0, 2));
+		eastContent.setLayout(new GridLayout(0, 1));
 		// 여백주기 시계 반대 방향
-		eastContent.setBorder(BorderFactory.createEmptyBorder(30, 50, 30, 50));
+		eastContent.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
 		btnDisConnect = new JButton("연결해제");
 		btnDisConnect.addActionListener(new ActionListener() {
@@ -204,7 +210,7 @@ public class MasterJFrame extends JFrame {
 					labelIP.setText("000.000.000.000");
 					labelHost.setText("Unknown");
 					
-					connectThread =  new MasterConnectThread(serverSocket,myJFrame);
+					connectThread =  new MasterConnectThread(serverSocket,myJFrame, userNo);
 					connectThread.start();
 
 					System.out.println("connectThread 다시실행");
@@ -215,15 +221,55 @@ public class MasterJFrame extends JFrame {
 			}
 
 		});
+		
+		JPanel frist = new JPanel(new GridLayout(0, 1));
+		JPanel second = new JPanel();
+		JPanel third = new JPanel();
 
-		eastContent.add(new JLabel("Host "));
-		eastContent.add(labelHost = new JLabel("미접속"));	
-		eastContent.add(new JLabel("IP  "));
-		eastContent.add(labelIP = new JLabel("000.000.000.000"));
-		eastContent.add(new JLabel("Access"));
-		eastContent.add(labelTimer = new JLabel("00:00:00"));
-		eastContent.add(btnDisConnect);
+		JPanel line1 = new JPanel(new GridLayout(0,2));
+		JPanel line2 = new JPanel(new GridLayout(0,2));
+		JPanel line3 = new JPanel(new GridLayout(0,2));
+		JPanel line4 = new JPanel(new GridLayout(0,2));
+		
+		
+		line1.add(new JLabel("Host "));
+		line1.add(labelHost = new JLabel("미접속"));
+		line2.add(new JLabel("IP  "));
+		line2.add(labelIP = new JLabel("000.000.000.000"));
+		line3.add(new JLabel("Access"));
+		line3.add(labelTimer = new JLabel("00:00:00"));
+		line4.add(new JLabel("Record"));
+		line4.add(new JLabel(""));
+		
+		frist.add(line1);
+		frist.add(line2);
+		frist.add(line3);
+		frist.add(line4);
 
+		/*
+		 * 접속한 소켓과 자신이 연결된 연결번호를 ConnectUserDAO/ConnectNonUserDAO에서 가져온 뒤에 
+		 * 연결번호에 해당하는 사용기록 번호를 UsageRecordDAO/UsageRecordNonDAO에서 가져와 
+		 * records열에 해당하는 값을 가져와 사용기록 패널에 추가
+		 * 
+		 * */
+		
+		// 레코드부분을 감쌀 그룹
+		
+		JPanel recordGroup = jframe.addGroupBox(Color.black,1,true);
+		recordGroup.setLayout(new GridLayout(0,1));
+		recordGroup.setPreferredSize(new Dimension(230,100));
+		recordGroup.add(recordContent);
+
+		JScrollPane scrollPane = new JScrollPane(recordGroup);
+//		scrollPane.setViewportView(recordGroup);
+		
+		second.add(scrollPane);
+		third.add(btnDisConnect);
+		
+		eastContent.add(frist);
+		eastContent.add(second);
+		eastContent.add(third);
+		
 		group.add(eastContent);
 		return group;
 	}
@@ -270,7 +316,18 @@ public class MasterJFrame extends JFrame {
 			
 		});
 		
+		JButton btnWithdrawal = new JButton("탈퇴");
+		btnWithdrawal.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				deleteUser();
+			}
+			
+		});
+		
 		JPanel logoutPart = new JPanel();
+		logoutPart.add(btnWithdrawal);
 		logoutPart.add(btnLogout);
 		
 		JComponent[] component = new JComponent[] {
@@ -365,10 +422,10 @@ public class MasterJFrame extends JFrame {
 		JButton btnController = new JButton("Controller");
 		JButton btnNetwork = new JButton("Network");
 		JButton btnAccount = new JButton("Account");
-		JButton btnOption = new JButton("Option");
+//		JButton btnOption = new JButton("Option");
 		
 		westContent.setLayout(new GridLayout(0,1));
-		westContent.setBorder(BorderFactory.createEmptyBorder(10, 30, 10, 10));
+		westContent.setBorder(BorderFactory.createEmptyBorder(50, 50, 10, 10));
 		
 		btnController.addActionListener(new ActionListener() {
 
@@ -400,20 +457,22 @@ public class MasterJFrame extends JFrame {
 			
 		});
 		
-		btnOption.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.out.println("Option 클릭");
-				card.show(eastContent,"option");
-			}
-			
-		});
+//		btnOption.addActionListener(new ActionListener() {
+//
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				System.out.println("Option 클릭");
+//				card.show(eastContent,"option");
+//			}
+//			
+//		});
 		
 		westContent.add(btnController);
+		westContent.add(new JLabel());
 		westContent.add(btnNetwork);
+		westContent.add(new JLabel());
 		westContent.add(btnAccount);
-		westContent.add(btnOption);
+//		westContent.add(btnOption);
 		
 		return westContent;
 	}
@@ -512,6 +571,41 @@ public class MasterJFrame extends JFrame {
 		center.add(fourth);
 		
 		pwChangeJFrame.addContain();
+	}
+	
+	private void deleteUser() {
+		String msgText = "정말로 탈퇴하시겠습니까?";
+		JLabel[] msg = new JLabel[] {new JLabel(msgText) };
+		JButton btnCheck = new JButton("확인");
+		DefaultJFrame error = new DefaultJFrame("알림", 350, 120, msg, btnCheck, true);
+		btnCheck.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String query = "delete from user where user_no = " + userDTO.get(0).getUserNo();
+				int reuslt = userDAO.userUpdate(query);
+				if(reuslt != 0) {
+					new LogInJFrame(false);
+					error.dispose();
+					jframe.dispose();
+					System.out.println("성공적으로 삭제됨");
+				}else {
+					String text = "삭제하는데 실패하였습니다.";
+					JLabel[] msg0 = new JLabel[] {new JLabel(text)};
+					JButton btnOk = new JButton("확인");
+					DefaultJFrame error2 = new DefaultJFrame("알림", 350, 120, msg, btnCheck, false);
+					btnCheck.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							error2.dispose();
+						}
+					});
+					error.dispose();
+					System.out.println("삭제하는데 실패하였습니다.");
+				}
+				
+			}
+		});
+		error.addContaionEmpty();
 	}
 	
 }

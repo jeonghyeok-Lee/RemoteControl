@@ -49,7 +49,6 @@ public class EmailSend {
 
 		// 4. Message 클래스의 객체를 사용하여 수신자와 내용, 제목의 메시지를 작성한다.
 		// 5. Transport 클래스를 사용하여 작성한 메세지를 전달한다.
-
 		try {
 			MimeMessage message = new MimeMessage(session);
 

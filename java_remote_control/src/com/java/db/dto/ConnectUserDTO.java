@@ -40,3 +40,5 @@ public class ConnectUserDTO {
 		this.connectDate = connectDate;
 	}
 }
+
+

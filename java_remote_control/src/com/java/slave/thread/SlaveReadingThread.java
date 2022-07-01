@@ -10,11 +10,17 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com.java.db.dao.ConnectUserDAO;
+import com.java.db.dao.UsageRecordDAO;
+import com.java.db.dto.ConnectUserDTO;
+import com.java.db.dto.UsageRecordDTO;
+import com.java.db.dto.UserDTO;
 import com.java.slave.SlaveJFrame;
 import com.java.utility.Screen;
 
@@ -76,16 +82,16 @@ public class SlaveReadingThread extends Thread {
 
 					labelIP.setText(strSplit[0]);
 					labelHost.setText(strSplit[1]);
-					masterWidth = Double.parseDouble(strSplit[2]);
-					masterHeight = Double.parseDouble(strSplit[3]);
+					masterWidth = Double.parseDouble(strSplit[2]);											// 마스터에서 넘어온 모니터 x값 크기
+					masterHeight = Double.parseDouble(strSplit[3]);											// 마스터에서 넘어온 모니터 y값 크기
 					System.out.println("masterWidth : " + masterWidth + " masterHeight " + masterHeight);
 					System.out.println("masterWidth - 10 : " + (masterWidth - 10));
-					myWidth = screen.getWidth();
-					myHeight = screen.getHeight();
+					myWidth = screen.getWidth();															// 슬레이브의 모니터 x 크기
+					myHeight = screen.getHeight();															// 슬레이브의 모니터 y 크기
 					System.out.println("mywidth : " + myWidth + " myheight " + myHeight);
 
-					xRatio = myWidth / masterWidth; // 비율 계산
-					yRatio = myHeight / masterHeight;
+					xRatio = myWidth / masterWidth; 														// 슬레이브와 마스터의 모니터 비율 계산
+					yRatio = myHeight / masterHeight;														
 					System.out.println("xRatio : " + xRatio + " yRatio " + yRatio);
 
 					System.out.println("서버 연결 성공");
@@ -122,6 +128,7 @@ public class SlaveReadingThread extends Thread {
 					} else if (value instanceof KeyEvent) {
 						KeyEvent key = (KeyEvent) value;
 						robot.keyPress(key.getKeyCode());
+						robot.keyRelease(key.getKeyCode());
 						System.out.println("keycode : " + key.getKeyCode());
 					} else if (value instanceof MouseWheelEvent) {
 						MouseWheelEvent e = (MouseWheelEvent) value;
@@ -157,4 +164,5 @@ public class SlaveReadingThread extends Thread {
 		}
 
 	}
+
 }

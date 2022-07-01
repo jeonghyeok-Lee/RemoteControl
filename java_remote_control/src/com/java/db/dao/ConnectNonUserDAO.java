@@ -80,4 +80,27 @@ public class ConnectNonUserDAO {
 		}
 		return result;
 	}
+	
+	// query에 따른 row 개수 파악
+	public int getConnectRow(String where) {
+		query = "select * from connect_nonuser" + where;
+		int result = 0;
+		try {
+			conn = DriverManager.getConnection(dbInfo.getUrl(), dbInfo.getUid(), dbInfo.getPw());
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(query);
+			result = rs.getRow();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				if(rs != null) rs.close();
+				if(stmt != null) stmt.close();
+				if(conn != null) conn.close();
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
 }

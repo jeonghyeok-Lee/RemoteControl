@@ -87,14 +87,18 @@ public class LogInJFrame extends JFrame {
 						txtID.setText("");
 						txtPW.setText("");
 					}
+					dto = dao.userSelect(where);
+					System.out.println(where);
 					System.out.println("ID : " + dto.get(0).getUserId() + " PW : " + dto.get(0).getUserPassword());
 					
 					if(checkProgram) {				// 슬레이브쪽에서 로그인 시도 시 
-						new SlaveJFrame(dto, dao);		// 회원으로 로그인					
+						new SlaveJFrame(dto, dao);		// 회원으로 로그인
+						jframe.dispose();
+						
 					}else {							// 마스터쪽에서 로그인 시도 시
 						new MasterJFrame(dto,dao);
+						jframe.dispose();
 					}
-					jframe.dispose();
 						
 				}else {
 					String msgText = "아이디 혹은 비밀번호를 모두 입력해주세요.";
@@ -121,7 +125,6 @@ public class LogInJFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				new AccountSignUp(checkProgram);
-
 			}
 			
 		});
