@@ -1,4 +1,4 @@
-package com.java.jframe;
+package com.java.jframe.origianl;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

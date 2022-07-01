@@ -21,8 +21,8 @@ import javax.swing.JTextField;
 
 import com.java.db.dao.UserDAO;
 import com.java.db.dto.UserDTO;
-import com.java.jframe.DefaultJFrame;
-import com.java.jframe.LogInJFrame;
+import com.java.jframe.origianl.DefaultJFrame;
+import com.java.jframe.origianl.LogInJFrame;
 import com.java.master.thread.MasterConnectThread;
 import com.java.utility.IpAddress;
 import com.java.utility.RegularExpression;

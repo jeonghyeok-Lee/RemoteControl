@@ -14,7 +14,7 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 
-import com.java.jframe.DefaultJFrame;
+import com.java.jframe.origianl.DefaultJFrame;
 import com.java.utility.Screen;
 
 public class MasterExecutionJFrame extends JFrame {

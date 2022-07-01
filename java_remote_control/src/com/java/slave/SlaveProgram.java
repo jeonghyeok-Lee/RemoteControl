@@ -1,6 +1,6 @@
 package com.java.slave;
 
-import com.java.jframe.LogInJFrame;
+import com.java.jframe.origianl.LogInJFrame;
 
 public class SlaveProgram {
 
