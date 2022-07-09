@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 public class SouthPanel extends JPanel {
 	private JLabel lbversion = null;			// 버전 표시 레이블
 	
+	// 버전표시가 있는 생성자
 	public SouthPanel(String version) {
 		setLayout(new GridLayout(0,1));
 
@@ -23,4 +24,10 @@ public class SouthPanel extends JPanel {
 		
 		this.add(lbversion);
 	}
+	
+	// 아무것도 없는 생성자
+	public SouthPanel() {
+		
+	}
+	
 }

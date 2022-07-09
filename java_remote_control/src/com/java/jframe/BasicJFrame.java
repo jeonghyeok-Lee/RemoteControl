@@ -19,12 +19,37 @@ public class BasicJFrame extends JFrame {
 	private int xSize = 0;									// 가로 사이즈
 	private int ySize = 0;									// 세로 사이즈
 	private Container contain = null;
-	private JPanel northPanel = null
-			,centerPanel = null
-			,eastPanel = null
-			,westPanel = null
-			,southPanel = null;
+	private JPanel panelNorth = null
+			,panelCenter = null
+			,panelEast = null
+			,panelWest = null
+			,panelSouth = null;
 	
+	
+	public JPanel getPanelCenter() {
+		return panelCenter;
+	}
+
+	public void setPanelCenter(JPanel panelCenter) {
+		this.panelCenter = panelCenter;
+	}
+
+	public JPanel getPanelEast() {
+		return panelEast;
+	}
+
+	public void setPanelEast(JPanel panelEast) {
+		this.panelEast = panelEast;
+	}
+
+	public JPanel getPanelWest() {
+		return panelWest;
+	}
+
+	public void setPanelWest(JPanel panelWest) {
+		this.panelWest = panelWest;
+	}
+
 	public String getTitle() {
 		return title;
 	}
@@ -49,26 +74,7 @@ public class BasicJFrame extends JFrame {
 		this.ySize = ySize;
 	}
 
-	public void setCenterPanel(JPanel centerPanel) {
-		this.centerPanel = centerPanel;
-	}
-
-	public JPanel getEastPanel() {
-		return eastPanel;
-	}
-
-	public void setEastPanel(JPanel eastPanel) {
-		this.eastPanel = eastPanel;
-	}
-
-	public JPanel getWestPanel() {
-		return westPanel;
-	}
-
-	public void setWestPanel(JPanel westPanel) {
-		this.westPanel = westPanel;
-	}
-
+	
 
 	// 로고, 버전표시가 있는 생성자(타이틀명, x사이즈, y사이즈) / layout이 BorderLayout
 	public BasicJFrame(String title, int xSize, int ySize) {
@@ -84,8 +90,8 @@ public class BasicJFrame extends JFrame {
 		contain = getContentPane();
 		contain.setLayout(new BorderLayout(10,3));
 		
-		northPanel = new NorthPanel();
-		southPanel = new SouthPanel("Version 1.0.1");
+		panelNorth = new NorthPanel();
+		panelSouth = new SouthPanel("Version 1.0.1");
 		
 
 	}
@@ -98,11 +104,11 @@ public class BasicJFrame extends JFrame {
 	 */
 	public void setContain() {
 		
-		if(northPanel != null) contain.add(northPanel,BorderLayout.NORTH);
-		if(centerPanel != null) contain.add(centerPanel,BorderLayout.CENTER);
-		if(eastPanel != null) contain.add(eastPanel,BorderLayout.EAST);
-		if(westPanel != null) contain.add(westPanel,BorderLayout.WEST);
-		if(southPanel != null) contain.add(southPanel,BorderLayout.SOUTH);
+		if(panelNorth != null) contain.add(panelNorth,BorderLayout.NORTH);
+		if(panelCenter != null) contain.add(panelCenter,BorderLayout.CENTER);
+		if(panelEast != null) contain.add(panelEast,BorderLayout.EAST);
+		if(panelWest != null) contain.add(panelWest,BorderLayout.WEST);
+		if(panelSouth != null) contain.add(panelSouth,BorderLayout.SOUTH);
 
 		setVisible(true);
 		setResizable(false);
