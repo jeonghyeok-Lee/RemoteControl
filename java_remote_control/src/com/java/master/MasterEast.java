@@ -19,6 +19,7 @@ import com.java.utility.IpAddress;
 public class MasterEast extends MiddlePanel {
 	private JLabel lbMyIp = null, lbMyHost = null, lbMyPort = null;
 	private final int PORT = 9095;
+	private CardLayout layoutCard = null;		// 컨텐츠의 CardLayout
 	
 	public MasterEast() {
 
@@ -30,9 +31,12 @@ public class MasterEast extends MiddlePanel {
 
 	// East에 들어갈 컨텐츠 내용을 모와둔 함수
 	private JPanel eastContent() {
-		JPanel content = new JPanel(new CardLayout());
+		JPanel content = new JPanel(layoutCard = new CardLayout());
 		
-		content.add(setController());
+		content.add(setController(), "controller");
+		content.add(setOption(), "option");
+		layoutCard.show(content, "option");
+		
 		return content;
 	}
 
@@ -72,21 +76,48 @@ public class MasterEast extends MiddlePanel {
 		return controller;
 	}
 
-	private JPanel setEastNetwork() {
+	private JPanel setNetwork() {
 		JPanel network = new JPanel();
 
 		return network;
 	}
 
-	private JPanel setEastAccount() {
+	private JPanel setAccount() {
 		JPanel account = new JPanel();
 
 		return account;
 	}
 
-	private JPanel setEastOption() {
-		JPanel option = new JPanel();
-
+	private JPanel setOption() {
+		JPanel option = new JPanel(new GridLayout(0,1));
+		
+		// 옵션에 들어갈 요소에 따라 다른 형태로 잡힐 수 있으므로 각 라인을 잡아줄 패널을 설정
+		JPanel[] line = new JPanel[] {
+				new JPanel(new GridLayout(0,1))
+				,new JPanel(),new JPanel(),new JPanel(), new JPanel()
+		};
+		
+		JPanel buttonPanel = new JPanel();					// 버튼을 위한 패널 설정
+		JButton btnChangePort = new JButton("변경");			// 포트 변경을 위한 버튼 
+		JButton btnClearOption = new JButton("초기화");		// 기본 상태로 변경 시키기 위한 버튼
+		JButton btnOKOption = new JButton("확인");			// 설정을 적용시키기 위한 버튼
+		
+		// 버튼이 들어갈 패널에 값 적용
+		buttonPanel.add(btnClearOption);				
+		buttonPanel.add(btnOKOption);
+		
+		// 첫번째 라인 내용 설정
+		JPanel first = new JPanel();
+		first.add(new JLabel("Port"));
+		first.add(new JLabel(Integer.toString(PORT)));
+		first.add(btnChangePort);
+		
+		// 첫번째 라인 적용
+		line[0].add(first);
+		
+		option.add(line[0]);
+		option.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		
 		return option;
 	}
 }
